@@ -9,10 +9,9 @@
 
 using std::string;
 
-leaf::window::window(const string &title, float width, float height, //
-                     window::style_mask sty_mask,                    //
-                     backing_store_type backing_type,                //
-                     bool defer) {
+leaf::window::window(string title, float width, float height,
+                     window::style_mask sty_mask,
+                     backing_store_type backing_type, bool defer) {
 
 	NSRect frame = NSMakeRect(100, 100, width, height);
 
@@ -49,14 +48,3 @@ NSBackingStoreType leaf::window::get(backing_store_type type) {
 		break;
 	}
 }
-
-/*
-
- NSRect frame = NSMakeRect(100, 100, width, height);
-
- _window = [[NSWindow alloc] initWithContentRect:frame
- styleMask:<#(NSWindowStyleMask) #>
- backing:<#(NSBackingStoreType) #>
- defer:<#(BOOL) #>];
-
- */

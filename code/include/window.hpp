@@ -14,7 +14,7 @@ class window {
 
 	// enum
   public:
-	enum class style_mask : int {
+	enum class style_mask : UInt {
 		titled = NSWindowStyleMaskTitled,
 		closable = NSWindowStyleMaskClosable,
 		resizable = NSWindowStyleMaskResizable,
@@ -42,8 +42,8 @@ class window {
 	};
 
   public:
-	window(const std::string &title, float width, float height,
-	       style_mask sty_mask, backing_store_type backing_type, bool defer);
+	window(std::string title, float width, float height, style_mask sty_mask,
+	       backing_store_type backing_type, bool defer);
 
 	void show();
 	void hide();
@@ -57,8 +57,8 @@ class window {
 
 inline window::style_mask operator|(window::style_mask a,
                                     window::style_mask b) {
-	return static_cast<window::style_mask>(static_cast<int>(a) |
-	                                       static_cast<int>(b));
+	return static_cast<window::style_mask>(static_cast<UInt>(a) |
+	                                       static_cast<UInt>(b));
 }
 
 } // namespace leaf

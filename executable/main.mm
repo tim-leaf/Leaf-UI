@@ -12,8 +12,6 @@ using namespace leaf;
 
 int main(int argc, const char *argv[]) {
 
-	// insert code here...
-
 	application test{};
 
 	window wind{"Window-Title",
@@ -26,6 +24,17 @@ int main(int argc, const char *argv[]) {
 	            false};
 
 	wind.show();
+
+	auto m_bar = test.get_m_bar();
+
+	auto _menu = leaf::menu("Tests");
+	auto _item =
+	    leaf::menu_item("Poop", []() { std::cout << "poo poo" << '\n'; });
+	_item.set_shortcut(leaf::shortcut{'e'});
+
+	_menu.add_item(_item);
+
+	m_bar->add_menu(_menu);
 
 	return test.run();
 }
