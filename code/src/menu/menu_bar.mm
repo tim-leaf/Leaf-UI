@@ -9,17 +9,15 @@
 
 leaf::menu_bar::menu_bar() { _menu = [[NSMenu alloc] init]; }
 
-void leaf::menu_bar::add_menu(menu &n_menu) //
-{
-	auto menu_ptr = std::make_unique<menu>(std::move(n_menu));
+void leaf::menu_bar::add_menu(std::unique_ptr<menu> &n_menu) { //
 
 	NSMenuItem *item = [[NSMenuItem alloc] init];
 
-	[item setSubmenu:menu_ptr->get_native()];
+	[item setSubmenu:n_menu->get_native()];
 
 	[_menu addItem:item];
 
-	menus.push_back(std::move(menu_ptr));
+	menus.push_back(std::move(n_menu));
 }
 
 NSMenu *leaf::menu_bar::get_native() { return _menu; }

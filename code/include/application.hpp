@@ -35,6 +35,10 @@ class application {
 	application &set_activation_policy(activation_policy);
 	menu_bar *get_m_bar();
 
+	void add_window(window &);
+
+	window *active_window;
+
   private:
 	NSApplication *_application;
 
@@ -43,6 +47,8 @@ class application {
 	application &set_menu_bar(menu_bar &);
 
 	NSApplicationActivationPolicy get(activation_policy);
+
+	std::vector<std::shared_ptr<window>> windows;
 };
 
 } // namespace leaf

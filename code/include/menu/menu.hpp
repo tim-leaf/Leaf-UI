@@ -16,7 +16,7 @@ class menu {
   public:
 	menu(std::string title);
 
-	void add_item(menu_item &item);
+	void add_item(std::unique_ptr<menu_item> &item);
 
 	NSMenu *get_native();
 

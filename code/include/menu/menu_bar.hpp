@@ -15,7 +15,7 @@ class menu_bar {
   public:
 	menu_bar();
 
-	void add_menu(menu &n_menu);
+	void add_menu(std::unique_ptr<menu> &n_menu);
 
 	NSMenu *get_native();
 

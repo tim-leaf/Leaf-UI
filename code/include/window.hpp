@@ -32,18 +32,15 @@ class window {
 		unified_title_and_toolbar = NSWindowStyleMaskUnifiedTitleAndToolbar,
 	};
 
-	enum class backing_store_type {
-		buffered,
-
-		retained API_DEPRECATED_WITH_REPLACEMENT("NSBackingStoreBuffered",
-		                                         macos(10.0, 10.13)),
-		non_retained API_DEPRECATED_WITH_REPLACEMENT("NSBackingStoreBuffered",
-		                                             macos(10.0, 10.13)),
-	};
-
   public:
+	window &operator=(window &&other) noexcept;
+	window(window &&other) noexcept;
+
+	window(const window &) = delete;
+	window operator=(const window &) = delete;
+
 	window(std::string title, float width, float height, style_mask sty_mask,
-	       backing_store_type backing_type, bool defer);
+	       bool defer);
 
 	void show();
 	void hide();
@@ -51,8 +48,6 @@ class window {
 
   private:
 	NSWindow *_window;
-
-	static NSBackingStoreType get(backing_store_type type);
 };
 
 inline window::style_mask operator|(window::style_mask a,

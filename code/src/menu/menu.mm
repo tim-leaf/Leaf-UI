@@ -12,12 +12,11 @@ leaf::menu::menu(std::string title) {
 	    initWithTitle:[NSString stringWithUTF8String:title.c_str()]];
 }
 
-void leaf::menu::add_item(menu_item &item) {
-	auto item_ptr = std::make_unique<menu_item>(std::move(item));
+void leaf::menu::add_item(std::unique_ptr<menu_item> &item) {
 
-	[_menu addItem:item_ptr->get_native()];
+	[_menu addItem:item->get_native()];
 
-	items.push_back(std::move(item_ptr));
+	items.push_back(std::move(item));
 }
 
 NSMenu *leaf::menu::get_native() { return _menu; }

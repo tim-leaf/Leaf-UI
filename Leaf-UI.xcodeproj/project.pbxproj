@@ -49,13 +49,20 @@
 /* Begin PBXFileReference section */
 		03547AD1303703C000DA13D2 /* libLeaf-UI.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = "libLeaf-UI.dylib"; sourceTree = BUILT_PRODUCTS_DIR; };
 		03547AE73037047E00DA13D2 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
-		03547AF03037059B00DA13D2 /* executable */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = executable; sourceTree = BUILT_PRODUCTS_DIR; };
+		03547AF03037059B00DA13D2 /* leaf_ui_tests */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = leaf_ui_tests; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
 		03547AE1303703FF00DA13D2 /* Exceptions for "code" folder in "Leaf-UI" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			publicHeaders = (
+				include/application.hpp,
+				include/callback_target.hpp,
+				include/callback.hpp,
+				include/menu/menu_bar.hpp,
+				include/menu/menu_item.hpp,
+				include/menu/menu.hpp,
+				include/window.hpp,
 				leaf_ui.hpp,
 			);
 			target = 03547AD0303703C000DA13D2 /* Leaf-UI */;
@@ -113,7 +120,7 @@
 			isa = PBXGroup;
 			children = (
 				03547AD1303703C000DA13D2 /* libLeaf-UI.dylib */,
-				03547AF03037059B00DA13D2 /* executable */,
+				03547AF03037059B00DA13D2 /* leaf_ui_tests */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -161,9 +168,9 @@
 			productReference = 03547AD1303703C000DA13D2 /* libLeaf-UI.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
-		03547AEF3037059B00DA13D2 /* executable */ = {
+		03547AEF3037059B00DA13D2 /* leaf_ui_tests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 03547AF43037059B00DA13D2 /* Build configuration list for PBXNativeTarget "executable" */;
+			buildConfigurationList = 03547AF43037059B00DA13D2 /* Build configuration list for PBXNativeTarget "leaf_ui_tests" */;
 			buildPhases = (
 				03547AEC3037059B00DA13D2 /* Sources */,
 				03547AED3037059B00DA13D2 /* Frameworks */,
@@ -178,11 +185,11 @@
 			fileSystemSynchronizedGroups = (
 				03547AF13037059B00DA13D2 /* executable */,
 			);
-			name = executable;
+			name = leaf_ui_tests;
 			packageProductDependencies = (
 			);
 			productName = executable;
-			productReference = 03547AF03037059B00DA13D2 /* executable */;
+			productReference = 03547AF03037059B00DA13D2 /* leaf_ui_tests */;
 			productType = "com.apple.product-type.tool";
 		};
 /* End PBXNativeTarget section */
@@ -217,7 +224,7 @@
 			projectRoot = "";
 			targets = (
 				03547AD0303703C000DA13D2 /* Leaf-UI */,
-				03547AEF3037059B00DA13D2 /* executable */,
+				03547AEF3037059B00DA13D2 /* leaf_ui_tests */,
 			);
 		};
 /* End PBXProject section */
@@ -411,6 +418,7 @@
 					"$(SRCROOT)/code/**",
 					"$(SRCROOT)/executable/code/**",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.timleaf;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -425,6 +433,7 @@
 					"$(SRCROOT)/code/**",
 					"$(SRCROOT)/executable/code/**",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.timleaf;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -450,7 +459,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		03547AF43037059B00DA13D2 /* Build configuration list for PBXNativeTarget "executable" */ = {
+		03547AF43037059B00DA13D2 /* Build configuration list for PBXNativeTarget "leaf_ui_tests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				03547AF53037059B00DA13D2 /* Debug */,
