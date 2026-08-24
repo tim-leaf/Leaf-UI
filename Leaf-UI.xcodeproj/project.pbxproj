@@ -9,7 +9,8 @@
 /* Begin PBXBuildFile section */
 		03424AE7303BB4F300191328 /* libLeaf-UI.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 03547AD1303703C000DA13D2 /* libLeaf-UI.dylib */; };
 		03424AE8303BB4F300191328 /* libLeaf-UI.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 03547AD1303703C000DA13D2 /* libLeaf-UI.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		03547AE93037048500DA13D2 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03547AE73037047E00DA13D2 /* AppKit.framework */; };
+		035F4D3F303C87B00089614B /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03547AE73037047E00DA13D2 /* AppKit.framework */; };
+		035F4D42303C87C30089614B /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03547AE73037047E00DA13D2 /* AppKit.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -47,6 +48,10 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			publicHeaders = (
 				include/application.hpp,
+				include/callback/callback.hpp,
+				include/menu/menu_item.hpp,
+				include/menu/menu.hpp,
+				include/window.hpp,
 				leaf_ui.hpp,
 			);
 			target = 03547AD0303703C000DA13D2 /* Leaf-UI */;
@@ -75,6 +80,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				03424AE7303BB4F300191328 /* libLeaf-UI.dylib in Frameworks */,
+				035F4D42303C87C30089614B /* AppKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -82,7 +88,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				03547AE93037048500DA13D2 /* AppKit.framework in Frameworks */,
+				035F4D3F303C87B00089614B /* AppKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -253,7 +259,6 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -285,7 +290,6 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -321,7 +325,6 @@
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC_EXCEPTIONS = YES;
 				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
@@ -383,7 +386,6 @@
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC_EXCEPTIONS = YES;
 				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;

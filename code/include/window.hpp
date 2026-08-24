@@ -32,14 +32,17 @@ inline style_mask operator|(style_mask a, style_mask b) {
 
 class window {
   public:
-	window(float w, float h, style_mask st_mask);
+	window(CGRect dimensions, style_mask st_mask);
 	~window();
 
 	void show();
+	void hide();
+
+	void close();
 
 	void set_title(const std::string &title);
 
-  private:
+	//  private:
 	NSWindow *_native;
 };
 

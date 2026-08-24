@@ -6,6 +6,10 @@
 //
 
 #pragma once
+#include "app_delegate.hpp"
+#include "menu.hpp"
+#include "menu_bar.hpp"
+#include "menu_item.hpp"
 #include "window.hpp"
 #import <AppKit/AppKit.h>
 #include <memory>
@@ -17,13 +21,27 @@ class application {
   public:
 	application();
 
-	void run();
+	int run();
 
+	void add_menu(std::unique_ptr<menu>);
 	void add_window(std::unique_ptr<window>);
+
+	void quit();
+
+	// App Delegate methods override
+  public:
+	void set_on_quit(std::function<void()>);
+	void set_should_terminate_on_all_windows_closed(std::function<bool()>);
 
   private:
 	NSApplication *_native;
+	app_delegate _delegate;
+
+	std::unique_ptr<menu_bar> _menu_bar;
 	std::vector<std::unique_ptr<window>> windows;
+
+  private:
+	void default_menu_bar();
 };
 
 } // namespace leaf
