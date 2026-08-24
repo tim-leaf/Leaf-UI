@@ -47,10 +47,13 @@
 		03547AE1303703FF00DA13D2 /* Exceptions for "code" folder in "Leaf-UI" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			publicHeaders = (
+				include/app_delegate.hpp,
 				include/application.hpp,
 				include/callback/callback.hpp,
+				include/menu/menu_bar.hpp,
 				include/menu/menu_item.hpp,
 				include/menu/menu.hpp,
+				include/widget/button.hpp,
 				include/window.hpp,
 				leaf_ui.hpp,
 			);
