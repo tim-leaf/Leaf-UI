@@ -24,7 +24,7 @@ class application {
 	int run();
 
 	void add_menu(std::unique_ptr<menu>);
-	void add_window(std::unique_ptr<window>);
+	void add_window(std::shared_ptr<window>);
 
 	void quit();
 
@@ -38,7 +38,7 @@ class application {
 	app_delegate _delegate;
 
 	std::unique_ptr<menu_bar> _menu_bar;
-	std::vector<std::unique_ptr<window>> windows;
+	std::vector<std::shared_ptr<window>> windows;
 
   private:
 	void default_menu_bar();

@@ -6,8 +6,11 @@
 //
 
 #pragma once
+#include "widget.hpp"
 #import <AppKit/AppKit.h>
+#include <memory>
 #include <string>
+#include <vector>
 
 namespace leaf {
 
@@ -30,7 +33,7 @@ inline style_mask operator|(style_mask a, style_mask b) {
 	return static_cast<style_mask>(static_cast<UInt>(a) | static_cast<UInt>(b));
 }
 
-class window {
+class window : public element {
   public:
 	window(CGRect dimensions, style_mask st_mask);
 	~window();
@@ -41,9 +44,11 @@ class window {
 	void close();
 
 	void set_title(const std::string &title);
+	void add_widget(std::unique_ptr<widget> n_widget);
 
   private:
 	NSWindow *_native;
+	std::vector<std::unique_ptr<widget>> widgets;
 };
 
 } // namespace leaf

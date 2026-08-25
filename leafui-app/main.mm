@@ -18,7 +18,6 @@ int main() {
 	os_log_info(logs::main, "Application launched");
 
 	// App Delegates override
-
 	app.set_on_quit //
 	    ([]() -> void { os_log_info(logs::main, "App closing"); });
 
@@ -38,15 +37,19 @@ int main() {
 	app.add_menu(std::move(test_menu));
 
 	// Window creation
-	auto win = std::make_unique<window>(
+	auto wind = std::make_shared<window>(
 	    CGRect({400, 200, 800, 600}),
 	    style_mask::closable | style_mask::miniaturizable |
 	        style_mask::resizable | style_mask::titled);
 
-	win->set_title("App");
-	win->show();
+	app.add_window(wind);
+	wind->set_title("App");
+	wind->show();
 
-	app.add_window(std::move(win));
+	// Widgets creation
+	auto but = std::make_unique<button>(wind);
+	wind->add_widget(std::move(but));
+	// ...
 
 	// App execution
 	return app.run();

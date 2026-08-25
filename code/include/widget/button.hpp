@@ -6,13 +6,16 @@
 //
 
 #pragma once
+#include "widget.hpp"
 #import <AppKit/AppKit.h>
 
 namespace leaf {
 
-class button {
+class button : public widget {
   public:
-	button();
+	button(std::weak_ptr<element> parent);
+
+	NSView *get_native();
 
   private:
 	NSButton *_native;

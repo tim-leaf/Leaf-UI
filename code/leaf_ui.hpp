@@ -21,4 +21,6 @@
 #include "menu_item.hpp"
 
 // Widgets
+#include "widget.hpp"
+
 #include "button.hpp"

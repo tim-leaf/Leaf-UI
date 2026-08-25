@@ -7,7 +7,7 @@
 
 #pragma once
 #include "menu.hpp"
-#include <AppKit/AppKit.h>
+#import <AppKit/AppKit.h>
 #include <memory>
 
 namespace leaf {

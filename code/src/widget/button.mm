@@ -7,6 +7,8 @@
 
 #include "button.hpp"
 
-leaf::button::button() {
-	
+leaf::button::button(std::weak_ptr<element> parent) : widget(parent) {}
+
+NSView *leaf::button::get_native() { //
+	return _native;
 }

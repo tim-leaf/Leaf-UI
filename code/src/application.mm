@@ -53,8 +53,8 @@ void leaf::application::quit() { //
 	[_native terminate:nil];
 }
 
-void leaf::application::add_window(std::unique_ptr<window> n_window) {
-	windows.push_back(std::move(n_window));
+void leaf::application::add_window(std::shared_ptr<window> n_window) {
+	windows.push_back(n_window);
 }
 
 void leaf::application::add_menu(std::unique_ptr<menu> n_menu) {
