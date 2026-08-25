@@ -42,7 +42,7 @@ class window {
 
 	void set_title(const std::string &title);
 
-	//  private:
+  private:
 	NSWindow *_native;
 };
 

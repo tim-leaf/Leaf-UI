@@ -40,8 +40,8 @@ int main() {
 	// Window creation
 	auto win = std::make_unique<window>(
 	    CGRect({400, 200, 800, 600}),
-	    style_mask::closable | style_mask::resizable |
-	        style_mask::miniaturizable | style_mask::titled);
+	    style_mask::closable | style_mask::miniaturizable |
+	        style_mask::resizable | style_mask::titled);
 
 	win->set_title("App");
 	win->show();
