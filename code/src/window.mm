@@ -6,6 +6,8 @@
 //
 
 #include "window.hpp"
+#include "application.hpp"
+#include "window_delegate.hpp"
 #include <iostream>
 
 leaf::window::window(CGRect dimensions, style_mask st_mask) : element({}) {
@@ -17,15 +19,30 @@ leaf::window::window(CGRect dimensions, style_mask st_mask) : element({}) {
 	                                      styleMask:ns_style_mask
 	                                        backing:NSBackingStoreBuffered
 	                                          defer:true];
+	[_native setRestorationClass:nil];
+	[_native setIdentifier:nil];
+
+	leaf_window_delegate *n_delegate = [[leaf_window_delegate alloc] init];
+
+	n_delegate.owner = this;
+
+	_delegate = n_delegate;
+
+	[_native setDelegate:_delegate];
 }
 
 leaf::window::~window() { //
 	[_native release];
 }
 
+void leaf::window::set_owner(application *app_ptr) {
+	_owner = app_ptr; //
+}
+
 void leaf::window::show() { [_native makeKeyAndOrderFront:nil]; }
 void leaf::window::hide() { [_native orderOut:nil]; }
 
+void leaf::window::minimize() { [_native miniaturize:nil]; }
 void leaf::window::close() { [_native close]; }
 
 void leaf::window::set_title(const std::string &title) {
@@ -37,4 +54,8 @@ void leaf::window::add_widget(std::unique_ptr<widget> n_widget) {
 	widgets.push_back(std::move(n_widget));
 
 	[[_native contentView] addSubview:widgets.back()->get_native()];
+}
+
+void leaf::window::on_close() { //
+	_owner->remove_window(this);
 }
