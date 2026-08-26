@@ -9,6 +9,10 @@
 
 leaf::button::button(std::weak_ptr<element> parent) : widget(parent) {}
 
-NSView *leaf::button::get_native() { //
-	return _native;
+leaf::button::~button() {
+	[_native release]; //
+}
+
+NSView *leaf::button::get_native() {
+	return _native; //
 }

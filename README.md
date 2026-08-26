@@ -116,10 +116,14 @@ For example, to ask for the app to quit once all windows are closed, in Obj-C yo
 
 But in C++, you can now do:
 ```cpp
-application app;
+application app{};
 
-app.set_should_terminate_on_all_windows_closed(
-	[]() -> bool { return true; }
+app.on_quit(
+	[&]() -> bool { 
+		some_object.destroy();
+		delete some_ptr;
+		os_log_info(logs::main, "Application is quitting\n");
+	}
 );
 ```
 

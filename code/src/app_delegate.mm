@@ -6,6 +6,7 @@
 //
 
 #include "app_delegate.hpp"
+#include <iostream>
 
 #pragma mark - Obj-C App Delegate
 
@@ -39,12 +40,20 @@
 	}
 }
 
+- (void)applicationDidHide:(NSNotification *)notification {
+	std::cout << "application is hidden" << '\n';
+}
+
 @end
 
 #pragma mark - C++ App Delegate
 leaf::app_delegate::app_delegate() {
 	_native = [[leaf_app_delegate alloc] init]; //
 	[_native setOwner:this];
+}
+
+leaf::app_delegate::~app_delegate() {
+	[_native release]; //
 }
 
 NSObject *leaf::app_delegate::get_native() {
