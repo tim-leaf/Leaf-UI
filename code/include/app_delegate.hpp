@@ -20,7 +20,7 @@ class app_delegate {
 	app_delegate();
 	~app_delegate();
 
-	NSObject *get_native();
+	NSObject *get_native() const;
 
 	std::function<bool()> should_terminate_after_last_window_closed = []() {
 		return true;

@@ -60,6 +60,6 @@ leaf::app_delegate::~app_delegate() {
 	[_native release]; //
 }
 
-NSObject *leaf::app_delegate::get_native() {
+NSObject *leaf::app_delegate::get_native() const{
 	return _native; //
 }

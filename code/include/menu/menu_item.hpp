@@ -7,6 +7,7 @@
 
 #pragma once
 #include "callback.hpp"
+#include "object.hpp"
 #import <AppKit/AppKit.h>
 #include <functional>
 #include <string>
@@ -36,17 +37,20 @@ struct shortcut {
 	std::string key;
 };
 
-class menu_item {
+class menu_item : public object {
+  protected:
+	menu_item(const std::string &title, std::function<void()> action);
+
   public:
-	menu_item(std::string title, std::function<void()> action);
+	static std::unique_ptr<menu_item> create(const std::string &title,
+	                                         std::function<void()> action);
+	~menu_item() override;
 
 	void set_shortcut(shortcut sc);
 
-	NSMenuItem *get_native();
+	NSMenuItem *get_native() const;
 
   private:
-	NSMenuItem *_native;
-
 	std::unique_ptr<callback> _callback;
 	leaf_callback_target *_target;
 };

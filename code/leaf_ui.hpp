@@ -21,10 +21,5 @@
 #include "menu_bar.hpp"
 #include "menu_item.hpp"
 
-// Widget - Abstract
-#include "element.hpp"
-#include "widget.hpp"
-
-// Wigdget - Conrete
-#include "button.hpp"
+// View
 #include "view.hpp"
