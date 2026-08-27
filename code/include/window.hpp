@@ -6,6 +6,7 @@
 //
 
 #pragma once
+#include "view.hpp"
 #include "widget.hpp"
 #import <AppKit/AppKit.h>
 #include <memory>
@@ -47,7 +48,8 @@ class window : public element {
 	void set_owner(application *);
 	void set_title(const std::string &title);
 
-	void add_widget(std::unique_ptr<widget> n_widget);
+	void add_widget(std::shared_ptr<widget> n_widget);
+	void add_widget(std::shared_ptr<view> n_view);
 
 	// behaviors
 	void show();
@@ -64,7 +66,9 @@ class window : public element {
 
 	leaf_window_delegate *_delegate;
 
-	std::vector<std::unique_ptr<widget>> widgets;
+	std::vector<std::shared_ptr<widget>> widgets;
+
+	NSView *get_native() override;
 };
 
 } // namespace leaf

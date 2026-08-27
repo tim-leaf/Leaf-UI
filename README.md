@@ -129,6 +129,30 @@ app.on_quit(
 
 
 ---
+### WindowDelegate
+
+To be able to react to windows' events, a `leaf_window_delegate` was built as follows: 
+```objc
+@interface leaf_window_delegate : NSObject<NSWindowDelegate>
+
+@property(nonatomic, assign) leaf::window *owner;
+
+-(void)windowWillClose:(NSNotification *)notification;
+
+@end
+```
+
+And the window class was modified. First, it was given a pointer to track its owner (`leaf::application`), and a `application::remove_window(window*)` method was exposed to the API. A `leaf::window::on_close` method that is called from within the `leaf_window_delegate::windowWillClose` was also created.
+
+In the end: 
+- When the `menu_item` "Close Window" ( ⌘ + W ) is called, it calls `[_native_window close]`.
+- The window closing calls the `leaf_window_delegate::windowWillClose`, which in its turn calls `_owner_window->on_close()`
+- `_owner_window->on_close()` calls `_owner_application->remove_window(this)`.
+
+That way the `leaf::application` vector containing the windows doesn't retain the closed `NSWindow`s, and erasing their `std::unique_ptr`s destroys the corresponding `leaf::window` wrappers.
+
+
+---
 ### Menu Bar
 
 In Obj-C's AppKit, the menus work with 2 objects:

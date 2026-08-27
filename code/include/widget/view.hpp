@@ -18,11 +18,15 @@ class view : public widget {
 	~view() override;
 
 	NSView *get_native() override;
-	void add_widget(std::unique_ptr<widget> n_widget);
+	void add_widget(std::shared_ptr<widget> n_widget);
+
+	// debugging options
+  public:
+	void set_debug_border(bool);
 
   private:
 	NSView *_native;
-	std::vector<std::unique_ptr<widget>> widgets;
+	std::vector<std::shared_ptr<widget>> widgets;
 };
 
 } // namespace leaf

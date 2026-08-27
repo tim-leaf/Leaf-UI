@@ -35,6 +35,10 @@ leaf::window::~window() { //
 	[_native release];
 }
 
+NSView *leaf::window::get_native() {
+	return [_native contentView]; //
+}
+
 void leaf::window::set_owner(application *app_ptr) {
 	_owner = app_ptr; //
 }
@@ -50,10 +54,19 @@ void leaf::window::set_title(const std::string &title) {
 	[_native setTitle:ns_title];
 }
 
-void leaf::window::add_widget(std::unique_ptr<widget> n_widget) {
-	widgets.push_back(std::move(n_widget));
+void leaf::window::add_widget(std::shared_ptr<widget> n_widget) {
+	widgets.push_back(n_widget);
 
-	[[_native contentView] addSubview:widgets.back()->get_native()];
+	NSView *parent = [_native contentView];
+	NSView *child = n_widget->get_native();
+
+	[parent addSubview:child];
+}
+
+void leaf::window::add_widget(std::shared_ptr<view> n_view) {
+	widgets.push_back(n_view);
+
+	[[_native contentView] addSubview:n_view->get_native()];
 }
 
 void leaf::window::on_close() { //

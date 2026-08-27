@@ -14,49 +14,61 @@ using namespace leaf;
 
 int main() {
 
+	// TEST VARIABLES
+	int count = 0;
+	// TEST VARIABLES
+
 	// Application creation
-	application app;
+	std::unique_ptr<application> app = std::make_unique<application>();
 	os_log_info(logs::main, "Application launched");
 
 	// App Delegates override
-	app.set_on_quit //
-	    ([]() -> void { os_log_info(logs::main, "App closing"); });
+	app->set_on_quit([]() -> void { os_log_info(logs::main, "App closing"); });
 
-	app.set_should_terminate_on_all_windows_closed //
-	    ([]() -> bool { return true; });
+	app->set_should_terminate_on_all_windows_closed(
+	    []() -> bool { return true; });
 
 	// Window creation
-	auto wind = std::make_shared<window>(
+	auto main_window = std::make_shared<window>(
 	    CGRect({400, 200, 800, 600}),
 	    style_mask::closable | style_mask::miniaturizable |
 	        style_mask::resizable | style_mask::titled //
 	);
-	app.add_window(wind);
+	app->add_window(main_window);
 
-	wind->set_title("App");
-	wind->show();
+	main_window->set_title("App");
 
 	// Menu bar configuration
-	auto hide_menu = std::make_unique<menu>("Window");
+	auto window_menu = std::make_unique<menu>("Window");
 
-	auto hide_menu_item =
-	    std::make_unique<menu_item>("Hide", [&wind]() { wind->minimize(); });
+	auto hide_menu_item = std::make_unique<menu_item>(
+	    "Hide", [&main_window]() { main_window->minimize(); });
 	hide_menu_item->set_shortcut(
 	    leaf::shortcut({leaf::modifier_flag::command, "m"}));
 
-	hide_menu->add_menu_item(std::move(hide_menu_item));
+	window_menu->add_menu_item(std::move(hide_menu_item));
 
-	app.add_menu(std::move(hide_menu));
+	app->add_menu(std::move(window_menu));
 
-	// Widgets creation
-	auto test_view = std::make_unique<view>(wind);
+	// - Widgets Test
+	//// Main View
+	auto main_view = std::make_shared<view>(main_window);
+	main_view->set_debug_border(true);
 
-	auto but = std::make_unique<button>(wind);
-	test_view->add_widget(std::move(but));
+	//// Button
+	auto but = std::make_shared<button>(
+	    std::pair<float, float>{300, 300}, main_view,
+	    [&count]() { os_log_debug(logs::main, "Button clicked %d", ++count); });
 
-	wind->add_widget(std::move(test_view));
-	// ...
+	but->set_debug_border(true);
+
+	main_view->add_widget(but);
+	but->set_layout(leaf::alignment::top);
+
+	main_window->add_widget(main_view);
+	// Widgets Test -
 
 	// App execution
-	return app.run();
+	main_window->show();
+	return app->run();
 }

@@ -19,7 +19,11 @@
 @implementation leaf_app_delegate
 
 - (void)setOwner:(leaf::app_delegate *)owner {
-	self->_owner = owner;
+	if (owner) {
+		self->_owner = owner;
+	} else {
+		throw std::runtime_error("no owner found for app delegate");
+	}
 }
 
 - (BOOL)applicationShouldTerminateAfterLastWindowClosed:

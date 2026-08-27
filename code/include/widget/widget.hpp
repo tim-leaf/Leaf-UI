@@ -17,8 +17,6 @@ class widget : public element {
   public:
 	widget(std::weak_ptr<element> _parent) : element(_parent) {}
 	virtual ~widget() = default;
-
-	virtual NSView *get_native() = 0;
 };
 
 } // namespace leaf
