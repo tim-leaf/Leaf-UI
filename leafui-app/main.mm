@@ -13,6 +13,7 @@
 using namespace leaf;
 
 int main() {
+	std::cout << std::boolalpha;
 
 	// Application creation
 	auto app = application::create();
@@ -75,15 +76,26 @@ int main() {
 	//});
 
 	// text field
-	auto txt_field = leaf::text_field::create(CGRect({50, 50, 100, 20}));
+	std::string test_string = "test";
+
+	auto txt_field =
+	    leaf::text_field::create(test_string, CGRect({50, 50, 100, 20}));
 	view->add_subview(txt_field);
 
-	txt_field->set_text("Test");
-	txt_field->set_action([&]() {
-		os_log_debug(logs::main, "Text field entered: %s",
+	//	txt_field->set_text("Test");
+	txt_field->add_action([txt_field, &test_string]() {
+		os_log_debug(logs::main, "%s  |  %s", test_string.c_str(),
 		             txt_field->get_text().c_str());
 	});
 
+	auto test_item =
+	    leaf::menu_item::create("test text_field", [txt_field, test_string] {
+		    os_log_debug(logs::main, "%s  |  %s", test_string.c_str(),
+		                 txt_field->get_text().c_str());
+	    });
+	test_item->set_shortcut(leaf::shortcut(leaf::modifier_flag::command, "t"));
+
+	app_menu->add_menu_item(std::move(test_item));
 	// text field
 
 	// label
@@ -92,29 +104,37 @@ int main() {
 	//	view->add_subview(test_label);
 	// label
 
-	////// checbox test
+	// Checbox
 	bool test_bool = true;
 
-	auto test_label =
-	    leaf::label::create("Test Label", CGRect({200, 200, 100, 100}));
-	view->add_subview(test_label);
-
-	// Checkbox
 	auto check = leaf::checkbox::create(test_bool, CGRect({100, 100, 100, 50}));
 	view->add_subview(check);
 
 	check->set_title("Checkbox");
-
-	auto test_bool_item = menu_item::create("Test Bool", [&]() {
-		int state =
-		    (check->get_native().state == NSControlStateValueOn) ? 1 : 0;
-		os_log_debug(logs::main, "Check: %d  |  bool: %d", state,
-		             int(test_bool));
+	check->add_action([check, &test_bool] {
+		std::cout << check->get_state() << " | " << test_bool << '\n'; //
 	});
-	test_bool_item->set_shortcut(
-	    leaf::shortcut(leaf::modifier_flag::command, "t"));
-	app_menu->add_menu_item(std::move(test_bool_item));
-	////// checbox test
+	// Checbox
+
+	////// slider test
+	double test_value = 0.0;
+
+	auto slide = leaf::slider::create(test_value, CGRect({80, 280, 100, 100}));
+	view->add_subview(slide);
+
+	slide->set_min(-10.0);
+	slide->set_max(10.00);
+	slide->set_neutral_value(0);
+
+	[slide->get_native() setAllowsTickMarkValuesOnly:YES];
+	[slide->get_native() setNumberOfTickMarks:10];
+
+	slide->add_action([slide, &test_value] {
+		std::cout << slide->get_value() << " | " << test_value << '\n'; //
+	});
+
+	[slide->get_native() setSliderType:NSSliderTypeCircular];
+	////// slider test
 
 	//// ☢️ TESTS ☢️ -
 

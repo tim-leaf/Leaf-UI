@@ -34,6 +34,10 @@ void leaf::callback::set_action(std::function<void()> n_action) {
 	action = n_action; //
 }
 
+std::function<void()> leaf::callback::get_action() const {
+	return action; //
+}
+
 #pragma mark - Callback Target
 @implementation leaf_callback_target {
 	leaf::callback *_callback;

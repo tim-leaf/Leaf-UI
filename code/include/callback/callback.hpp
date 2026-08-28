@@ -26,8 +26,10 @@ class callback {
 
 	void invoke();
 
+	std::function<void()> get_action() const;
+
   private:
-	std::function<void()> action;
+	std::function<void()> action = []() {};
 };
 
 } // namespace leaf
