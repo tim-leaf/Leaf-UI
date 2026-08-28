@@ -10,6 +10,7 @@
 #include "menu.hpp"
 #include "menu_bar.hpp"
 #include "menu_item.hpp"
+#include "object.hpp"
 #include "window.hpp"
 #import <AppKit/AppKit.h>
 #include <memory>
@@ -17,10 +18,13 @@
 
 namespace leaf {
 
-class application {
-  public:
+class application : object {
+  protected:
 	application();
-	~application();
+
+  public:
+	static std::unique_ptr<application> create();
+	~application() override;
 
 	int run();
 
@@ -31,22 +35,22 @@ class application {
 
 	void quit();
 
+	NSApplication *get_native() const;
+
 #pragma mark - App Delegate methods override
   public:
 	void set_on_quit(std::function<void()>);
+	void set_on_hide(std::function<void()>);
 	void set_should_terminate_on_all_windows_closed(std::function<bool()>);
 
 #pragma mark App Delegate methods override -
 
   private:
-	NSApplication *_native;
+	NSApplication *app_native = nullptr;
 	app_delegate _delegate;
 
 	std::unique_ptr<menu_bar> _menu_bar;
 	std::vector<std::shared_ptr<window>> windows;
-
-  private:
-	void default_menu_bar();
 };
 
 } // namespace leaf

@@ -14,13 +14,28 @@ using namespace leaf;
 
 int main() {
 
-	// TEST VARIABLES
-	int count = 0;
-	// TEST VARIABLES
-
 	// Application creation
-	std::unique_ptr<application> app = std::make_unique<application>();
+	auto app = application::create();
 	os_log_info(logs::main, "Application launched");
+
+	auto app_menu = leaf::menu::create("App");
+
+	// Quit App Item
+	auto quit_item =
+	    leaf::menu_item::create("Quit App", [&]() { app->quit(); });
+	quit_item->set_shortcut(shortcut{modifier_flag::command, "q"});
+
+	app_menu->add_menu_item(std::move(quit_item));
+
+	// Close Window Item
+	auto close_window = leaf::menu_item::create //
+	    ("Close Window", [&]() {                //
+		    [[NSApp keyWindow] close];
+	    });
+	close_window->set_shortcut(shortcut{modifier_flag::command, "w"});
+
+	app_menu->add_menu_item(std::move(close_window));
+	// Default Menu Bar -
 
 	// App Delegates override
 	app->set_on_quit([]() -> void { os_log_info(logs::main, "App closing"); });
@@ -28,47 +43,55 @@ int main() {
 	app->set_should_terminate_on_all_windows_closed(
 	    []() -> bool { return true; });
 
-	// Window creation
+	// Window Creation
 	auto main_window = std::make_shared<window>(
-	    CGRect({400, 200, 800, 600}),
-	    style_mask::closable | style_mask::miniaturizable |
-	        style_mask::resizable | style_mask::titled //
-	);
+	    CGRect({0, 0, 500, 500}),
+	    NSWindowStyleMaskClosable | NSWindowStyleMaskMiniaturizable |
+	        NSWindowStyleMaskResizable | NSWindowStyleMaskTitled);
 	app->add_window(main_window);
 
-	main_window->set_title("App");
+	main_window->set_title("Main Window");
+	main_window->show();
 
-	// Menu bar configuration
-	auto window_menu = std::make_unique<menu>("Window");
+	//// - ☢️ TESTS ☢️
 
-	auto hide_menu_item = std::make_unique<menu_item>(
-	    "Hide", [&main_window]() { main_window->minimize(); });
-	hide_menu_item->set_shortcut(
-	    leaf::shortcut({leaf::modifier_flag::command, "m"}));
+	auto view = leaf::view::create(CGRect({10, 10, 480, 480}));
+	main_window->add_view(view);
 
-	window_menu->add_menu_item(std::move(hide_menu_item));
+	view->set_wants_layer(true);
+	view->get_layer().borderWidth = 2.0;
+	view->get_layer().borderColor = NSColor.systemPinkColor.CGColor;
 
-	app->add_menu(std::move(window_menu));
+	// Button Sub View
+	//	auto button = leaf::button::create(CGRect({50, 50, 150, 100}));
+	//	view->add_subview(button);
+	//
+	//	button->set_wants_layer(true);
+	//	button->get_layer().borderWidth = 2.0;
+	//	button->get_layer().borderColor = NSColor.systemYellowColor.CGColor;
+	//
+	//	button->set_title("Nice Button");
+	//	button->set_action([]() { os_log_debug(logs::main, "Button pressed");
+	//});
 
-	// - Widgets Test
-	//// Main View
-	auto main_view = std::make_shared<view>(main_window);
-	main_view->set_debug_border(true);
+	////// text field test
+	auto txt_field = leaf::text_field::create(CGRect({50, 50, 100, 20}));
+	view->add_subview(txt_field);
 
-	//// Button
-	auto but = std::make_shared<button>(
-	    std::pair<float, float>{300, 300}, main_view,
-	    [&count]() { os_log_debug(logs::main, "Button clicked %d", ++count); });
+	txt_field->set_text("Test");
+	txt_field->set_action([&]() {
+		os_log_debug(logs::main, "Text field entered: %s",
+		             txt_field->get_text().c_str());
+	});
 
-	but->set_debug_border(true);
+	txt_field->set_wants_layer(true);
+	txt_field->get_layer().borderWidth = 2.0;
+	txt_field->get_layer().borderColor = NSColor.systemBlueColor.CGColor;
+	////// text field test
 
-	main_view->add_widget(but);
-	but->set_layout(leaf::alignment::top);
-
-	main_window->add_widget(main_view);
-	// Widgets Test -
+	//// ☢️ TESTS ☢️ -
 
 	// App execution
-	main_window->show();
+	app->add_menu(std::move(app_menu));
 	return app->run();
 }

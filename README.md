@@ -11,10 +11,12 @@ For example:
 // before
 NSWindow *window = [[NSWindow alloc] 
 	initWithContentRect: NSMakeRect(0, 0, 800, 600)
-	styleMask : NSWindowStyleMaskClosable  |
-				NSWindowStyleMaskResizable |
+	
+	styleMask:	NSWindowStyleMaskClosable  |
 				NSWindowStyleMaskTitled
+	
 	backing: NSBackingStoreBuffered
+	
 	defer: YES];
 	
 [window setTitle:@"My Application"];
@@ -23,19 +25,23 @@ NSWindow *window = [[NSWindow alloc]
 
 ```cpp
 // after
-auto wind = make_unique<leaf::window>(
-				CGRect({400, 200, 800, 600}),
-				style_mask::closable |
-				style_mask::miniaturizable |
-				style_mask::resizable |
-				style_mask::titled
-			);
+auto main_window = std::make_shared<window>(
+		// CGrect frame
+		CGRect({0, 0, 500, 500}),
+		
+		// NSWindowStyleMask
+		NSWindowStyleMaskClosable | NSWindowStyleMaskTitled,
+		
+		// NSBackingStoreType (optional), default = buffered
+		NSBackingStoreBuffered, 
+		
+		// defer (optional), default = true
+		true
 );
+app->add_window(wind);
 
 wind->set_title("Title");
 wind->show();
-
-app.add_window(std::move(wind));
 ```
 
 
@@ -43,10 +49,10 @@ app.add_window(std::move(wind));
 
 - [x] `NSApplication`
 - [x] `NSAppDelegate`
-- [x] `NSWindow`
-- [ ] `NSView`
 - [x] `NSMenu`
 - [x] `NSMenuItem`
+- [x] `NSWindow`
+- [ ] `NSView`
 - [ ] `NSButton`
 
 
@@ -72,10 +78,11 @@ NSMenuItem *item = [[NSMenuItem alloc]
 
 ```cpp
 // after
-auto item = std::make_unique<menu_item>(
-				"Test Item",
-				[] { /* do something */ }
-			);
+std::unique_ptr<menu_item> item = 
+leaf::menu_item::create(
+	"Test Item",
+	[] { /* do something */ }
+);
 ```
 
 
@@ -107,9 +114,9 @@ For example, to ask for the app to quit once all windows are closed, in Obj-C yo
 @implementation
 
 -(BOOL)applicationShouldTerminateAfterLastWindowClosed:
-  (NSApplication *)sender { 
-	    return YES; 
-    }
+	(NSApplication *)sender { 
+		return YES; 
+}
 
 @end
 ```
@@ -122,7 +129,8 @@ app.on_quit(
 	[&]() -> bool { 
 		some_object.destroy();
 		delete some_ptr;
-		os_log_info(logs::main, "Application is quitting\n");
+		os_log_info(logs::main, 
+			"Application is quitting\n");
 	}
 );
 ```
@@ -164,7 +172,7 @@ I decided to go in a different direction, and implement three objects:
 - `menu`
 - `menu_item`
 
-This way the hierarchy is as follow: `menu_bar` owns all `menu` objects. Each menu item owns its `menu_item` objects. This lets `menu_bar` act as a container for the `menu`s and `menu_item`s with its own methods to handle them such as `menu_bar::add_menu`.
+This way the hierarchy is as follow: `menu_bar` owns all `menu` objects. Each menu object owns its `menu_item` objects. This lets `menu_bar` act as a container for the `menu`s and `menu_item`s with its own methods to handle them such as `menu_bar::add_menu`.
 
 This also dissipates the confusion of having several of the same `menu` objects acting respectively as a menu bar and sub-menus.
 
@@ -172,9 +180,9 @@ Menus Hierarchy Tree Example:
 ```
 Menu Bar
 │
-├── File
-│	├── New
-│	├── Open
+├── File 		// Menu
+│	├── New		// Menu Item
+│	├── Open		
 │	└── Quit
 │
 └── Edit
@@ -186,39 +194,43 @@ Menu Bar
 ## Project Tree
 
 ```
-Leaf-UI/code/
+Leaf-UI
 │
-├── leaf_ui.hpp 		// entry point of the library
+├── leaf_ui.hpp 	// entry point of the library
 │
-├── include/
-│	├── callback/
+├── include
+│	├── callback
 │	│	└── callback.hpp
 │	│
-│	├── menu/
+│	├── menu
 │	│	├── menu.hpp
 │	│	├── menu_bar.hpp
 │	│	└── menu_item.hpp
 │	│
-│	├── widget/
-│	│	└── button.hpp
+│	├── view
+│	│	└── view.hpp
 │	│
 │	├── app_delegate.hpp
 │	├── application.hpp
-│	└── window.hpp
+│	├── object.hpp
+│	├── window.hpp
+│	└── window_delegate.hpp
 │
-└── src/
-	├── callback/
+└── src
+	├── callback
 	│	└── callback.mm
 	│
-	├── menu/
+	├── menu
 	│	├── menu.mm
 	│	├── menu_bar.mm
 	│	└── menu_item.mm
 	│
-	├── widget/
-	│	└── button.mm
+	├── view
+	│	└── view.mm
 	│
 	├── app_delegate.mm
 	├── application.mm
-	└── window.mm
+	├── object.mm
+	├── window.mm
+	└── window_delegate.mm
 ```

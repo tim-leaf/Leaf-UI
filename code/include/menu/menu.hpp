@@ -7,23 +7,27 @@
 
 #pragma once
 #include "menu_item.hpp"
+#include "object.hpp"
 #import <AppKit/AppKit.h>
+#include <memory>
 #include <string>
 #include <vector>
 
 namespace leaf {
 
-class menu {
-  public:
+class menu : object {
+  protected:
 	menu(const std::string &title);
+
+  public:
+	static std::unique_ptr<menu> create(const std::string &title);
+	~menu() override;
 
 	void add_menu_item(std::unique_ptr<menu_item>);
 
-	NSMenu *get_native();
+	NSMenu *get_native() const;
 
   private:
-	NSMenu *_native;
-
 	std::vector<std::unique_ptr<menu_item>> menu_items;
 };
 

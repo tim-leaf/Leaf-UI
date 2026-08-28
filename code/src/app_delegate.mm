@@ -45,7 +45,11 @@
 }
 
 - (void)applicationDidHide:(NSNotification *)notification {
-	std::cout << "application is hidden" << '\n';
+	if (_owner) {
+		_owner->on_hide();
+	} else {
+		throw std::runtime_error("no owner found for app delegate");
+	}
 }
 
 @end
@@ -60,6 +64,6 @@ leaf::app_delegate::~app_delegate() {
 	[_native release]; //
 }
 
-NSObject *leaf::app_delegate::get_native() {
+NSObject *leaf::app_delegate::get_native() const {
 	return _native; //
 }

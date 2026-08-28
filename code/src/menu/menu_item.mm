@@ -8,10 +8,10 @@
 #include "menu_item.hpp"
 
 leaf::menu_item::menu_item //
-    (std::string title, std::function<void()> action) {
+    (const std::string &title, std::function<void()> action) {
 
 	// Init callback
-	_callback = std::make_unique<callback>(std::move(action));
+	_callback = leaf::callback::create(action);
 	_target = [[leaf_callback_target alloc] initWithCallback:_callback.get()];
 
 	NSString *ns_title = [NSString stringWithUTF8String:title.c_str()];
@@ -20,11 +20,22 @@ leaf::menu_item::menu_item //
 	                                     action:@selector(invoke:)
 	                              keyEquivalent:@""];
 
-	[_native setTarget:_target];
+	[static_cast<NSMenuItem *>(_native) setTarget:_target];
 }
 
-NSMenuItem *leaf::menu_item::get_native() {
-	return _native; //
+std::unique_ptr<leaf::menu_item> //
+    leaf::menu_item::create      //
+    (const std::string &title, std::function<void()> action) {
+	return std::unique_ptr<menu_item>(new menu_item(title, action));
+}
+
+leaf::menu_item::~menu_item() {
+	[_target release];
+	[_native release]; //
+}
+
+NSMenuItem *leaf::menu_item::get_native() const {
+	return static_cast<NSMenuItem *>(_native); //
 }
 
 void leaf::menu_item::set_shortcut(shortcut sc) {
@@ -34,6 +45,7 @@ void leaf::menu_item::set_shortcut(shortcut sc) {
 
 	NSString *ns_key = [NSString stringWithUTF8String:sc.key.c_str()];
 
-	[_native setKeyEquivalent:ns_key];
-	[_native setKeyEquivalentModifierMask:ns_modifier_flag];
+	[static_cast<NSMenuItem *>(_native) setKeyEquivalent:ns_key];
+	[static_cast<NSMenuItem *>(_native)
+	    setKeyEquivalentModifierMask:ns_modifier_flag];
 }

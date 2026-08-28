@@ -5,6 +5,8 @@
 //  Created by Tim Le Flem on 2026-08-20.
 //
 
+//// RENAME: LeafKit
+
 #pragma once
 #include "app_delegate.hpp"
 #include "application.hpp"
@@ -21,10 +23,7 @@
 #include "menu_bar.hpp"
 #include "menu_item.hpp"
 
-// Widget - Abstract
-#include "element.hpp"
-#include "widget.hpp"
-
-// Wigdget - Conrete
+// View
 #include "button.hpp"
+#include "text_field.hpp"
 #include "view.hpp"

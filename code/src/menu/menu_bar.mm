@@ -11,8 +11,16 @@ leaf::menu_bar::menu_bar() {
 	_native = [[NSMenu alloc] init]; //
 }
 
-NSMenu *leaf::menu_bar::get_native() {
-	return _native; //
+std::unique_ptr<leaf::menu_bar> leaf::menu_bar::create() {
+	return std::unique_ptr<leaf::menu_bar>(new menu_bar());
+}
+
+leaf::menu_bar::~menu_bar() {
+	[_native release]; //
+}
+
+NSMenu *leaf::menu_bar::get_native() const {
+	return static_cast<NSMenu *>(_native); //
 }
 
 void leaf::menu_bar::add_menu(std::unique_ptr<menu> n_menu) {
@@ -22,5 +30,5 @@ void leaf::menu_bar::add_menu(std::unique_ptr<menu> n_menu) {
 
 	[item setSubmenu:menus.back()->get_native()];
 
-	[_native addItem:item];
+	[static_cast<NSMenu *>(_native) addItem:item];
 }
