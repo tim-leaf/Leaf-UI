@@ -74,7 +74,7 @@ int main() {
 	//	button->set_action([]() { os_log_debug(logs::main, "Button pressed");
 	//});
 
-	////// text field test
+	// text field
 	auto txt_field = leaf::text_field::create(CGRect({50, 50, 100, 20}));
 	view->add_subview(txt_field);
 
@@ -84,10 +84,37 @@ int main() {
 		             txt_field->get_text().c_str());
 	});
 
-	txt_field->set_wants_layer(true);
-	txt_field->get_layer().borderWidth = 2.0;
-	txt_field->get_layer().borderColor = NSColor.systemBlueColor.CGColor;
-	////// text field test
+	// text field
+
+	// label
+	//	auto test_label =
+	//	    leaf::label::create("Test Label", CGRect({200, 200, 100, 100}));
+	//	view->add_subview(test_label);
+	// label
+
+	////// checbox test
+	bool test_bool = true;
+
+	auto test_label =
+	    leaf::label::create("Test Label", CGRect({200, 200, 100, 100}));
+	view->add_subview(test_label);
+
+	// Checkbox
+	auto check = leaf::checkbox::create(test_bool, CGRect({100, 100, 100, 50}));
+	view->add_subview(check);
+
+	check->set_title("Checkbox");
+
+	auto test_bool_item = menu_item::create("Test Bool", [&]() {
+		int state =
+		    (check->get_native().state == NSControlStateValueOn) ? 1 : 0;
+		os_log_debug(logs::main, "Check: %d  |  bool: %d", state,
+		             int(test_bool));
+	});
+	test_bool_item->set_shortcut(
+	    leaf::shortcut(leaf::modifier_flag::command, "t"));
+	app_menu->add_menu_item(std::move(test_bool_item));
+	////// checbox test
 
 	//// ☢️ TESTS ☢️ -
 

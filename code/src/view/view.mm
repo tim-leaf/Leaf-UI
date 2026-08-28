@@ -7,6 +7,7 @@
 
 #include "view.hpp"
 
+#pragma mark - construction / destruction
 leaf::view::view() {
 	_native = [[NSView alloc] init]; //
 }
@@ -31,30 +32,33 @@ NSView *leaf::view::get_native() const {
 	return static_cast<NSView *>(_native); //
 }
 
-#pragma mark - add views
+void leaf::view::set_superview(view *n_superview) {
+	superview = n_superview; //
+}
 
+leaf::view *leaf::view::get_superview() const {
+	return superview; //
+}
+
+#pragma mark - add views
 void leaf::view::add_subview(std::shared_ptr<view> n_subview) {
 	[get_native() addSubview:n_subview->get_native()];
+	n_subview->set_superview(this);
 
 	subviews.push_back(n_subview);
 }
 
 #pragma mark - control state
+void leaf::view::show() { set_hidden(false); }
+void leaf::view::hide() { set_hidden(true); }
 
-void leaf::view::show() {
-	[get_native() setHidden:NO]; //
+void leaf::view::set_hidden(bool n_value) {
+	[get_native() setHidden:n_value]; //
 }
 
-void leaf::view::hide() {
-	[get_native() setHidden:YES]; //
-}
-
-bool leaf::view::is_hidden() {
+bool leaf::view::is_hidden() const {
 	return get_native().isHidden; //
 }
-
-// void set_translates_autoresizing_mask_into_constraints(bool);
-// bool translates_autoresizing_mask_into_constraints() const;
 
 void leaf::view::set_translates_autoresizing_mask_into_constraints //
     (bool n_value) {
@@ -66,8 +70,7 @@ bool leaf::view::translates_autoresizing_mask_into_constraints() const {
 	return get_native().translatesAutoresizingMaskIntoConstraints;
 }
 
-#pragma mark - set up
-
+#pragma mark - getters / setters
 void leaf::view::set_wants_layer(bool n_value) {
 	[get_native() setWantsLayer:n_value];
 }
@@ -94,4 +97,70 @@ CGRect leaf::view::get_bounds() const {
 
 void leaf::view::set_bounds(CGRect n_bounds) {
 	get_native().bounds = n_bounds; //
+}
+
+void leaf::view::set_alpha(double n_alpha) {
+	[get_native() setAlphaValue:n_alpha]; //
+}
+
+double leaf::view::get_alpha() const {
+	return get_native().alphaValue; //
+}
+
+// Anchors
+NSLayoutYAxisAnchor *leaf::view::top_anchor() const {
+	return get_native().topAnchor;
+}
+NSLayoutYAxisAnchor *leaf::view::bottom_anchor() const {
+	return get_native().bottomAnchor;
+}
+NSLayoutYAxisAnchor *leaf::view::centerY_anchor() const {
+	return get_native().centerYAnchor;
+}
+
+NSLayoutXAxisAnchor *leaf::view::left_anchor() const {
+	return get_native().leftAnchor;
+}
+
+NSLayoutXAxisAnchor *leaf::view::right_anchor() const {
+	return get_native().rightAnchor;
+}
+
+NSLayoutXAxisAnchor *leaf::view::leading_anchor() const {
+	return get_native().leadingAnchor;
+}
+
+NSLayoutXAxisAnchor *leaf::view::trailing_anchor() const {
+	return get_native().trailingAnchor;
+}
+
+NSLayoutXAxisAnchor *leaf::view::centerX_anchor() const {
+	return get_native().centerXAnchor;
+}
+
+NSLayoutDimension *leaf::view::width_anchor() const {
+	return get_native().widthAnchor;
+}
+
+NSLayoutDimension *leaf::view::height_anchor() const {
+	return get_native().heightAnchor;
+}
+
+// Subviews
+size_t leaf::view::subview_count() const {
+	return subviews.size(); //
+}
+
+leaf::view *leaf::view::get_subview(size_t idx) const {
+	return subviews[idx].get(); //
+}
+
+// Resizing
+void leaf::view::set_autoresizing_mask //
+    (NSAutoresizingMaskOptions n_resizing_mask) {
+	[get_native() setAutoresizingMask:n_resizing_mask];
+}
+
+NSAutoresizingMaskOptions leaf::view::get_autoresizing_mask() const {
+	return get_native().autoresizingMask;
 }

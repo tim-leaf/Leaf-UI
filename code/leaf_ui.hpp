@@ -25,5 +25,7 @@
 
 // View
 #include "button.hpp"
+#include "checkbox.hpp"
+#include "label.hpp"
 #include "text_field.hpp"
 #include "view.hpp"

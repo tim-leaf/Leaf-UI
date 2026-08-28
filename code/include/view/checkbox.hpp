@@ -1,0 +1,40 @@
+//
+//  checkbox.hpp
+//  Leaf-UI
+//
+//  Created by Tim Le Flem on 2026-08-28.
+//
+
+#pragma once
+#include "callback.hpp"
+#include "view.hpp"
+#import <AppKit/AppKit.h>
+
+namespace leaf {
+
+class checkbox : public view {
+  protected:
+	checkbox(bool &);
+	checkbox(bool &, CGRect frame);
+
+  public:
+	static std::shared_ptr<checkbox> create(bool &);
+	static std::shared_ptr<checkbox> create(bool &, CGRect frame);
+
+	~checkbox() override;
+
+	NSButton *get_native() const;
+
+	void set_checked(bool);
+
+	void set_title(const std::string &);
+	bool is_checked() const;
+
+  private:
+	bool &_state;
+
+	std::unique_ptr<callback> _callback;
+	leaf_callback_target *_target;
+};
+
+} // namespace leaf

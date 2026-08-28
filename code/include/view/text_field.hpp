@@ -28,7 +28,7 @@ class text_field : public view {
 
 	void set_action(std::function<void()>);
 
-	void set_text(const std::string &n_text);
+	void set_text(const std::string &);
 	std::string get_text() const;
 
   private:
