@@ -40,11 +40,13 @@ class application : object {
 #pragma mark - App Delegate methods override
   public:
 	void set_on_quit(std::function<void()>);
+	void set_on_hide(std::function<void()>);
 	void set_should_terminate_on_all_windows_closed(std::function<bool()>);
 
 #pragma mark App Delegate methods override -
 
   private:
+	NSApplication *app_native = nullptr;
 	app_delegate _delegate;
 
 	std::unique_ptr<menu_bar> _menu_bar;

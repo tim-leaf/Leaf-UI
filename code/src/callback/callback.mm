@@ -8,13 +8,30 @@
 #include "callback.hpp"
 
 #pragma mark - Callback
-leaf::callback::callback(std::function<void()> func) { //
-	this->func = func;
+leaf::callback::callback() { //
+	action = []() {};
+}
+
+std::unique_ptr<leaf::callback> leaf::callback::create() {
+	return std::unique_ptr<callback>(new callback()); //
+}
+
+leaf::callback::callback(std::function<void()> n_action) { //
+	action = n_action;
+}
+
+std::unique_ptr<leaf::callback>
+leaf::callback::create(std::function<void()> n_action) {
+	return std::unique_ptr<callback>(new callback(n_action)); //
 }
 
 void leaf::callback::invoke() {
-	if (func)
-		func();
+	if (action)
+		action();
+}
+
+void leaf::callback::set_action(std::function<void()> n_action) {
+	action = n_action; //
 }
 
 #pragma mark - Callback Target

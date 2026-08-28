@@ -18,14 +18,15 @@ leaf::window::window(CGRect frame, NSWindowStyleMask style_mask,
 	                                        backing:backing_store
 	                                          defer:_defer];
 
-	[static_cast<NSWindow *>(_native) setRestorationClass:nil];
-	[static_cast<NSWindow *>(_native) setIdentifier:nil];
+	[get_native() setRestorationClass:nil];
+	[get_native() setIdentifier:nil];
 
 	_delegate = [[leaf_window_delegate alloc] init];
-	[static_cast<NSWindow *>(_native) setDelegate:_delegate];
+	[get_native() setDelegate:_delegate];
 }
 
 leaf::window::~window() { //
+	[_delegate release];
 	[_native release];
 }
 
@@ -37,21 +38,31 @@ void leaf::window::set_owner(application *app_ptr) {
 	_owner = app_ptr; //
 }
 
-void leaf::window::show() {
-	[static_cast<NSWindow *>(_native) makeKeyAndOrderFront:nil];
+void leaf::window::show() { //
+	[get_native() makeKeyAndOrderFront:nil];
 }
-void leaf::window::hide() { [static_cast<NSWindow *>(_native) orderOut:nil]; }
+void leaf::window::hide() { //
+	[get_native() orderOut:nil];
+}
 
-void leaf::window::minimize() {
-	[static_cast<NSWindow *>(_native) miniaturize:nil];
+void leaf::window::minimize() { //
+	[get_native() miniaturize:nil];
 }
-void leaf::window::close() { [static_cast<NSWindow *>(_native) close]; }
+void leaf::window::close() { //
+	[get_native() close];
+}
 
 void leaf::window::set_title(const std::string &title) {
 	NSString *ns_title = [NSString stringWithUTF8String:title.c_str()];
-	[static_cast<NSWindow *>(_native) setTitle:ns_title];
+	[get_native() setTitle:ns_title];
 }
 
 void leaf::window::on_close() { //
 	_owner->remove_window(this);
+}
+
+void leaf::window::add_view(std::shared_ptr<view> view) {
+	views.push_back(view);
+
+	[[get_native() contentView] addSubview:view->get_native()];
 }

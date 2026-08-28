@@ -14,26 +14,22 @@
 
 namespace leaf {
 
-enum class modifier_flag : UInt {
-	none = 0,
-	help = NSEventModifierFlagHelp,
-	shift = NSEventModifierFlagShift,
-	option = NSEventModifierFlagOption,
-	command = NSEventModifierFlagCommand,
-	control = NSEventModifierFlagControl,
-	caps_lock = NSEventModifierFlagCapsLock,
-	dev_ind_flags_mask = NSEventModifierFlagDeviceIndependentFlagsMask,
-	function = NSEventModifierFlagFunction,
-	num_pad = NSEventModifierFlagNumericPad,
-};
-
-inline modifier_flag operator|(modifier_flag a, modifier_flag b) {
-	return static_cast<modifier_flag>(static_cast<UInt>(a) |
-	                                  static_cast<UInt>(b));
-}
+namespace modifier_flag {
+inline const NSEventModifierFlags none = 0;
+inline const NSEventModifierFlags help = NSEventModifierFlagHelp;
+inline const NSEventModifierFlags shift = NSEventModifierFlagShift;
+inline const NSEventModifierFlags option = NSEventModifierFlagOption;
+inline const NSEventModifierFlags command = NSEventModifierFlagCommand;
+inline const NSEventModifierFlags control = NSEventModifierFlagControl;
+inline const NSEventModifierFlags caps_lock = NSEventModifierFlagCapsLock;
+inline const NSEventModifierFlags dev_ind_flags_mask =
+    NSEventModifierFlagDeviceIndependentFlagsMask;
+inline const NSEventModifierFlags function = NSEventModifierFlagFunction;
+inline const NSEventModifierFlags num_pad = NSEventModifierFlagNumericPad;
+} // namespace modifier_flag
 
 struct shortcut {
-	modifier_flag m_flag = modifier_flag::none;
+	NSEventModifierFlags m_flag = modifier_flag::none;
 	std::string key;
 };
 

@@ -11,7 +11,7 @@ leaf::menu_item::menu_item //
     (const std::string &title, std::function<void()> action) {
 
 	// Init callback
-	_callback = std::make_unique<callback>(std::move(action));
+	_callback = leaf::callback::create(action);
 	_target = [[leaf_callback_target alloc] initWithCallback:_callback.get()];
 
 	NSString *ns_title = [NSString stringWithUTF8String:title.c_str()];
@@ -30,6 +30,7 @@ std::unique_ptr<leaf::menu_item> //
 }
 
 leaf::menu_item::~menu_item() {
+	[_target release];
 	[_native release]; //
 }
 

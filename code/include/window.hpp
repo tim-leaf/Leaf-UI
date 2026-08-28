@@ -7,6 +7,7 @@
 
 #pragma once
 #include "object.hpp"
+#include "view.hpp"
 #import <AppKit/AppKit.h>
 #include <memory>
 #include <string>
@@ -21,7 +22,9 @@ class application;
 
 class window : public object {
   public:
-	window(CGRect frame, NSWindowStyleMask style_mask, NSBackingStoreType backing_store = NSBackingStoreBuffered, bool _defer = true);
+	window(CGRect frame, NSWindowStyleMask style_mask,
+	       NSBackingStoreType backing_store = NSBackingStoreBuffered,
+	       bool _defer = true);
 	~window();
 
 	NSWindow *get_native() const;
@@ -39,9 +42,14 @@ class window : public object {
 
 	void on_close();
 
+	// add widgets
+	void add_view(std::shared_ptr<view>);
+
   protected:
 	application *_owner;
 	leaf_window_delegate *_delegate;
+
+	std::vector<std::shared_ptr<view>> views;
 };
 
 } // namespace leaf

@@ -8,18 +8,26 @@
 #pragma once
 #import <AppKit/AppKit.h>
 #include <functional>
+#include <memory>
 
 #pragma mark - Callback
 namespace leaf {
 
 class callback {
+  protected:
+	callback();
+	callback(std::function<void()>);
+
   public:
-	callback(std::function<void()> func);
+	static std::unique_ptr<callback> create();
+	static std::unique_ptr<callback> create(std::function<void()>);
+
+	void set_action(std::function<void()>);
 
 	void invoke();
 
   private:
-	std::function<void()> func;
+	std::function<void()> action;
 };
 
 } // namespace leaf

@@ -28,6 +28,8 @@ class app_delegate {
 
 	std::function<void()> on_quit = []() {};
 
+	std::function<void()> on_hide = []() {};
+
   private:
 	leaf_app_delegate *_native;
 };

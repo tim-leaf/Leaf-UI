@@ -11,9 +11,10 @@
 leaf::application::application() {
 	_native = [NSApplication sharedApplication];
 
-	[static_cast<NSApplication *>(_native)
-	    setActivationPolicy:NSApplicationActivationPolicyRegular];
-	[static_cast<NSApplication *>(_native) setDelegate:_delegate.get_native()];
+	[get_native() setActivationPolicy:NSApplicationActivationPolicyRegular];
+
+	[get_native() setDelegate:static_cast<id<NSApplicationDelegate>>(
+	                              _delegate.get_native())];
 
 	// Use the customized (or not) menu bar
 	_menu_bar = leaf::menu_bar::create();
@@ -28,19 +29,18 @@ leaf::application::~application() {
 }
 
 NSApplication *leaf::application::get_native() const {
-	return static_cast<NSApplication *>(_native);
+	return static_cast<NSApplication *>(_native); //
 }
 
 int leaf::application::run() {
-	[static_cast<NSApplication *>(_native) setMainMenu:_menu_bar->get_native()];
+	[get_native() setMainMenu:_menu_bar->get_native()];
 
-	[static_cast<NSApplication *>(_native) run];
-
+	[get_native() run];
 	return 0;
 }
 
-void leaf::application::quit() { //
-	[static_cast<NSApplication *>(_native) terminate:nil];
+void leaf::application::quit() {
+	[get_native() terminate:nil]; //
 }
 
 void leaf::application::add_window(std::shared_ptr<window> n_window) {
@@ -68,9 +68,12 @@ void leaf::application::set_on_quit(std::function<void()> new_on_quit) {
 	_delegate.on_quit = new_on_quit; //
 }
 
+void leaf::application::set_on_hide(std::function<void()> new_on_hide) {
+	_delegate.on_hide = new_on_hide; //
+}
+
 void leaf::application::set_should_terminate_on_all_windows_closed(
     std::function<bool()> new_action) {
 	_delegate.should_terminate_after_last_window_closed = new_action;
 }
-
 #pragma mark App Delegate methods override -
