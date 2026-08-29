@@ -46,7 +46,7 @@ int main() {
 
 	// Window Creation
 	auto main_window = std::make_shared<window>(
-	    CGRect({0, 0, 500, 500}),
+	    CGRect({450, 200, 500, 500}),
 	    NSWindowStyleMaskClosable | NSWindowStyleMaskMiniaturizable |
 	        NSWindowStyleMaskResizable | NSWindowStyleMaskTitled);
 	app->add_window(main_window);
@@ -57,8 +57,7 @@ int main() {
 	main_window->set_on_close(
 	    [] { os_log_debug(logs::main, "Window Closing"); });
 
-	//// - ☢️ TESTS ☢️
-
+	// View
 	auto view = leaf::view::create(CGRect({10, 10, 480, 480}));
 	main_window->add_view(view);
 
@@ -92,8 +91,9 @@ int main() {
 	// text field
 
 	// label
+	std::string label_text = "Test Label";
 	auto test_label =
-	    leaf::label::create("Test Label", CGRect({200, 200, 100, 100}));
+	    leaf::label::create(label_text, CGRect({200, 200, 100, 100}));
 	view->add_subview(test_label);
 	// label
 
@@ -109,34 +109,49 @@ int main() {
 	});
 	// Checbox
 
-	////// slider test
+	// Slider
 	double test_value = 0.0;
+	std::string string_value = "Slider: " + std::to_string(test_value);
+
+	auto slider_label =
+	    label::create(string_value, CGRect({150, 280, 100, 100}));
+	view->add_subview(slider_label);
 
 	auto slide = leaf::slider::create(test_value, CGRect({80, 280, 100, 100}));
 	view->add_subview(slide);
 
 	slide->set_min(-10.0);
-	slide->set_max(10.00);
-	slide->set_neutral_value(0);
+	slide->set_max(+10.0);
+	//	slide->set_neutral_value(0);
 
-	//	[slide->get_native() setAllowsTickMarkValuesOnly:YES];
-	slide->set_allows_tick_mark_values_only(true);
-	//	[slide->get_native() setNumberOfTickMarks:10];
-	slide->set_number_of_tick_marks(10);
+	slide->set_continuous(true);
 
-	slide->add_action([slide, &test_value] {
+	slide->add_action([slide, slider_label, &test_value, &string_value] {
 		std::cout << slide->get_value() << " | " << test_value << '\n'; //
+		slider_label->set_text("Slider: " + std::to_string(test_value));
 	});
 
-	[slide->get_native() setSliderType:NSSliderTypeCircular];
-	////// slider test
+	slide->set_slider_style(NSSliderTypeLinear);
+	// Slider
 
-	auto test_item = leaf::menu_item::create("slider:", [&slide, &test_value] {
-		os_log_debug(logs::main, "%f  |  %f", slide->get_value(), test_value);
-	});
-	test_item->set_shortcut(leaf::shortcut(leaf::modifier_flag::command, "t"));
+	//// - ☢️ TESTS ☢️
 
-	app_menu->add_menu_item(std::move(test_item));
+	//
+
+	NSProgressIndicator *prog =
+	    [[NSProgressIndicator alloc] initWithFrame:CGRect({300, 300, 100, 20})];
+	[view->get_native() addSubview:prog];
+
+	NSPopUpButton *popup =
+	    [[NSPopUpButton alloc] initWithFrame:CGRect({100, 300, 100, 20})
+	                               pullsDown:true];
+
+	[popup addItemWithTitle:@"Option1"];
+	[popup addItemWithTitle:@"Option2"];
+	[popup addItemWithTitle:@"Option3"];
+
+	[view->get_native() addSubview:popup];
+
 	//// ☢️ TESTS ☢️ -
 
 	// App execution
