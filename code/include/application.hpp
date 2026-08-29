@@ -41,7 +41,8 @@ class application : object {
   public:
 	void set_on_quit(std::function<void()>);
 	void set_on_hide(std::function<void()>);
-	void set_should_terminate_on_all_windows_closed(std::function<bool()>);
+	void set_should_terminate_on_all_windows_closed //
+	    (std::function<bool()>);
 
 #pragma mark App Delegate methods override -
 

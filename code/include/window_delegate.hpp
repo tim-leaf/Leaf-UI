@@ -6,13 +6,26 @@
 //
 
 #pragma once
-#include "window.hpp"
 #import <AppKit/AppKit.h>
+#include <functional>
 
-@interface leaf_window_delegate : NSObject <NSWindowDelegate>
+#pragma mark - Obj-C Window Delegate forward declaration
+@class leaf_window_delegate;
 
-@property(nonatomic, assign) leaf::window *owner;
+#pragma mark - C++ Window Delegate
+namespace leaf {
 
-- (void)windowWillClose:(NSNotification *)notification;
+class window_delegate {
+  public:
+	window_delegate();
+	~window_delegate();
 
-@end
+	NSObject *get_native() const;
+
+	std::function<void()> on_close = []() {};
+
+  private:
+	leaf_window_delegate *_native;
+};
+
+}; // namespace leaf

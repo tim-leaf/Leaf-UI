@@ -48,7 +48,8 @@ std::shared_ptr<leaf::slider> leaf::slider::create //
 }
 
 leaf::slider::~slider() {
-	[_native release]; //
+	[_target release];
+	[_native release];
 }
 
 #pragma mark - setters / getters
@@ -80,6 +81,27 @@ void leaf::slider::set_neutral_value(const double n_neutral_value) {
 	[get_native() setNeutralValue:n_neutral_value]; //
 }
 
-double leaf::slider::get_value() {
+void leaf::slider::set_continuous(const bool n_value) {
+	[get_native() setContinuous:n_value]; //
+}
+
+bool leaf::slider::get_continuous() const {
+	return [get_native() isContinuous]; //
+}
+
+void leaf::slider::set_allows_tick_mark_values_only(const bool n_value) {
+	[get_native() setAllowsTickMarkValuesOnly:n_value]; //
+}
+
+void leaf::slider::set_number_of_tick_marks(const uint n_num) {
+	[get_native() setNumberOfTickMarks:n_num]; //
+	value_ref = [get_native() doubleValue];
+}
+
+void leaf::slider::set_slider_style(const NSSliderType type) {
+	[get_native() setSliderType:type]; //
+}
+
+double leaf::slider::get_value() const {
 	return get_native().doubleValue; //
 }

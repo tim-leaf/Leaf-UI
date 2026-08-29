@@ -21,12 +21,12 @@ leaf::window::window(CGRect frame, NSWindowStyleMask style_mask,
 	[get_native() setRestorationClass:nil];
 	[get_native() setIdentifier:nil];
 
-	_delegate = [[leaf_window_delegate alloc] init];
-	[get_native() setDelegate:_delegate];
+	[get_native() setDelegate:static_cast //
+	              <id<NSWindowDelegate>>  //
+	              (_delegate.get_native())];
 }
 
 leaf::window::~window() { //
-	[_delegate release];
 	[_native release];
 }
 
@@ -57,8 +57,10 @@ void leaf::window::set_title(const std::string &title) {
 	[get_native() setTitle:ns_title];
 }
 
-void leaf::window::on_close() { //
-	_owner->remove_window(this);
+void leaf::window::set_on_close //
+    (std::function<void()> n_action) {
+
+	_delegate.on_close = n_action;
 }
 
 void leaf::window::add_view(std::shared_ptr<view> view) {

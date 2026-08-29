@@ -9,47 +9,53 @@
 #include <iostream>
 
 #pragma mark - Obj-C App Delegate
-
 @interface leaf_app_delegate : NSObject <NSApplicationDelegate>
 
 @property(nonatomic, assign) leaf::app_delegate *owner;
+- (void)setOwner:(leaf::app_delegate *)owner;
+
+- (BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication *)sender;
+
+- (void)applicationWillTerminate:(NSNotification *)notification;
+
+- (void)applicationDidHide:(NSNotification *)notification;
 
 @end
 
 @implementation leaf_app_delegate
 
 - (void)setOwner:(leaf::app_delegate *)owner {
-	if (owner) {
+	if (owner)
 		self->_owner = owner;
-	} else {
+
+	else
 		throw std::runtime_error("no owner found for app delegate");
-	}
 }
 
 - (BOOL)applicationShouldTerminateAfterLastWindowClosed:
     (NSApplication *)sender //
 {
-	if (_owner) {
+	if (_owner)
 		return _owner->should_terminate_after_last_window_closed();
-	} else {
+
+	else
 		throw std::runtime_error("no owner found for app delegate");
-	}
 }
 
 - (void)applicationWillTerminate:(NSNotification *)notification {
-	if (_owner) {
+	if (_owner)
 		_owner->on_quit();
-	} else {
+
+	else
 		throw std::runtime_error("no owner found for app delegate");
-	}
 }
 
 - (void)applicationDidHide:(NSNotification *)notification {
-	if (_owner) {
+	if (_owner)
 		_owner->on_hide();
-	} else {
+
+	else
 		throw std::runtime_error("no owner found for app delegate");
-	}
 }
 
 @end

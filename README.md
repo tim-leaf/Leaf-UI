@@ -1,15 +1,15 @@
-# LEAF-UI
+# Leaf-UI
 
 ## Description
 
-Leaf-UI was made to allow C++ developers to create native macOS apps without having to handle the Obj-C part of AppKit.
+Leaf-UI was made to allow C++ developers to create native macOS apps without having to handle the Objective-C part of AppKit.
 
-It acts a wrapper for Obj-C classes and objects, so Obj-C syntax can be handled in the background.
+It acts a wrapper for Objective-C classes and objects, so Objective-C syntax can be handled in the background.
 
 For example: 
 ```objc
 // before
-NSWindow *window = [[NSWindow alloc] 
+NSWindow *main_window = [[NSWindow alloc] 
 	initWithContentRect: NSMakeRect(0, 0, 800, 600)
 	
 	styleMask:	NSWindowStyleMaskClosable  |
@@ -19,8 +19,8 @@ NSWindow *window = [[NSWindow alloc]
 	
 	defer: YES];
 	
-[window setTitle:@"My Application"];
-[window makeKeyAndOrderFront:nil];
+[main_window setTitle:@"My Application"];
+[main_window makeKeyAndOrderFront:nil];
 ```
 
 ```cpp
@@ -38,10 +38,11 @@ auto main_window = std::make_shared<window>(
 		// defer (optional), default = true
 		true
 );
-app->add_window(wind);
 
-wind->set_title("Title");
-wind->show();
+app->add_window(main_window);
+
+main_window->set_title("Title");
+main_window->show();
 ```
 
 
@@ -49,19 +50,88 @@ wind->show();
 
 - [x] `NSApplication`
 - [x] `NSAppDelegate`
+- [x] `NSWindow`
+- [x] `NSWindowDelegate`
 - [x] `NSMenu`
 - [x] `NSMenuItem`
-- [x] `NSWindow`
-- [ ] `NSView`
-- [ ] `NSButton`
+- [x] `NSView`
+- [x] `NSButton`
+- [x] `NSSlider`
+- [x] `NSTextField` 
 
 
 ## Specificities
 
 ---
+### Native Exposure
+
+The goal of Leaf-UI is not to replace AppKit and abstract every single behavior possible. Rather it aims at giving programmers a C++ wrapper that's easier to use for some than Objective-C. 
+
+However, Objective-C behaviors are not locked, and the native objects can be accessed from their wrapper freely, like so:
+```objc
+auto some_slider = leaf::slider::create();
+
+some_slider->set_min_value(0.0);
+some_slider->set_max_value(100.0);
+
+[some_slider->get_native() setSliderType:NSSliderTypeCircular];
+```
+
+Here the `NSSliderType` can be modified through either the C++ or Objective-C method, both calls are equally valid as the wrapper would do the same call under the hood.
+
+This is particularly useful for behaviors that are not yet supported by Leaf-UI.
+
+However, bypassing already wrapped methods can have some unintended effects at times, for example:
+```objc
+double value = 0;
+auto slider = slider::create(value);
+
+[slider->get_native() setDoubleValue:7];
+```
+
+In this example, initializing `NSSlider*`'s value through Objective-C doesn't update `value` which is referenced through the `slider` object. 
+
+The `[get_native() method]` should be limited to un-handled cases.
+
+In short:
+> ⚠️ **Native methods bypass Leaf-UI's synchronization logic** ⚠️
+
+
+---
+### Ownership
+
+Leaf-UI constructors are protected, so objects are created through their create() factory functions. The factories return either std::shared_ptr or std::unique_ptr depending on the ownership model of the object.
+
+This prevents the user from accidentally creating unmanaged instances of Leaf-UI objects.
+
+For example: 
+```cpp
+auto app = leaf::application::create(); // unique_ptr
+
+// ...
+
+bool x = true;
+auto toggle_x = leaf::checkbox::create(x);
+```
+
+
+#### State Reference
+
+Some Leaf-UI widgets like `slider` and `checkbox` will store a reference to an external value, and synchronize with it upon ***activation*** (see Callbacks section).
+
+For example, to create a slider:
+```cpp
+double test_value = 0.0;
+auto slide = leaf::slider::create(test_value);
+```
+
+Now upon activation, `slider::value_ref` (`test_value` here) is set to : `value_ref = [get_native() doubleValue]`.
+
+
+---
 ### Callbacks
 
-The Obj-C callbacks are replaced by C++ lambda functions.
+Leaf-UI provides a C++ callback interface over AppKit's Objective-C target/action mechanism.
 
 For example:
 ```objc
@@ -85,38 +155,140 @@ leaf::menu_item::create(
 );
 ```
 
+To use a callback in a class, all you need is to add 2 members to a class derived from `object`, like so:
+```objc
+class new_object : public object {
+	public:
+		void set_action(std::function<void()> new_action) {
+			// overrides the default ([]() {}) action
+			// set_action is optional if the default 
+			// behavior is enough by itself
+			_callback->set_action(new_action); 
+		}
+	
+	private:
+		void init_callback() {
+			
+			// creates the callback responsible for calling
+			// the function defined below
+			_callback = leaf::callback::create([] {
+				// default behavior
+			});
+			
+			// creates a callback target for NSObject*
+			_target = [[leaf_callback_target alloc]
+				initWithCallback:_callback.get()];
+			
+			// assigns the target to NSObject* 
+			[get_native() setTarget:_target];
+			
+			// assigns the `callback::invoke()` method
+			// to NSObject*. `callback::invoke()`'s  job 
+			// is to call callback's action, overriden above
+			[get_native() setAction:@selector(invoke:)];
+		}
+		
+		std::unique_ptr<callback> _callback;
+		leaf_callback_target *_target;
+}
+```
+
+So, in order: 
+- `_callback` is created with a lambda function which it stores.
+- `_target` is created and stores `callback*` .
+
+- `_target` is assigned as the `NSObject`'s target.
+- `leaf_target_callback::invoke(id sender)` is added as the action of `NSObject*` 
+
+- `invoke(id sender)` calls `_callback::invoke()` which calls `_callback.action`, whatever it is.
+
+- Then upon "activation", the widget calls `leaf_target_callback::invoke(id sender)`. "activation" can mean different things depending on the widget. For a `button` it's clicking, for a `text_field` it's pressing Return ( ⏎ ), ...
+
+#### Activation per Widget
+
+| Widget      | Activation          |
+| ----------- | ------------------- |
+| menu_item   | menu item selection |
+| button      | mouse click         |
+| text_field  | enter/return ( ⏎ )  |
+| slider      | value change        |
+
+
+#### Add Actions
+
+In some widgets such as `slider` and `checkbox`, the basic synchronisation behavior can't be overriden. However, custom behavior can still be added to the widget upon activation, with the `add_action` method.
+
+This adds behaviors right after the synchronisation of the referenced value and the UI's value. 
+
+So:
+```cpp
+bool x = true;
+auto check = leaf::checkbox::create(x);
+
+check->add_action([check] {
+	std::cout << "Hello ";
+});
+
+check->add_action([check] {
+	std::cout << "World!";
+});
+```
+
+Now, upon activation of the checkbox, the console will print: `Hello World!`. The behaviors are executed in order, from first to last, right after the slider-value and external reference synchronisation.
+
+So:
+```
+AppKit event
+     ↓
+Leaf-UI callback
+     ↓
+synchronize external state
+     ↓
+user action #1
+     ↓
+user action #2
+     ↓
+	...
+```
+
 
 ---
 ### AppDelegate
 
-In order to be able to customize the applications, an app_delegate class was created to replace Obj-C's object inheriting `NSObject` and acting as a delegate. 
+In order to be able to customize the applications, an app_delegate class was created to replace Objective-C's object inheriting `NSObject` and acting as a delegate. 
 
 In order to do so, the `application_delegate` class was given default hooks, like:
-```
+```cpp
 std::function<bool()> should_terminate_after_last_window_closed = []() { return true; };
 ```
 
 or:
-```
+```cpp
 std::function<void()> on_quit = []() {};
 ```
 
 
-These function are then called from within an Obj-C app delegate object.
+These function are then called from within an Objective-C app delegate object.
 More importantly, they can be overriden thanks to the `application` class.
 
-For example, to ask for the app to quit once all windows are closed, in Obj-C you would do:
+For example, to ask for the app to quit once all windows are closed, in Objective-C you would do:
 ```objc
 @interface leaf_app_delegate : NSObject<NSApplicationDelegate>
+
+@property(nonatomic, assign) leaf::app_delegate *owner;
+- (void)setOwner:(leaf::app_delegate *)owner;
+
+- (void)applicationWillTerminate:(NSNotification *)notification;
 
 @end
 
 @implementation
 
--(BOOL)applicationShouldTerminateAfterLastWindowClosed:
-	(NSApplication *)sender { 
-		return YES; 
+- (void)applicationWillTerminate:(NSNotification *)notification {
+	if(_owner)
+		_owner->on_quit();
 }
+
 
 @end
 ```
@@ -126,7 +298,7 @@ But in C++, you can now do:
 application app{};
 
 app.on_quit(
-	[&]() -> bool { 
+	[&]() -> void { 
 		some_object.destroy();
 		delete some_ptr;
 		os_log_info(logs::main, 
@@ -134,6 +306,8 @@ app.on_quit(
 	}
 );
 ```
+
+Upon an `NSApplication` closing, `applicationWillTerminate:` is automatically called. `app_delegate` simply sets the behavior of the method.
 
 
 ---
@@ -163,7 +337,7 @@ That way the `leaf::application` vector containing the windows doesn't retain th
 ---
 ### Menu Bar
 
-In Obj-C's AppKit, the menus work with 2 objects:
+In Objective-C's AppKit, the menus work with 2 objects:
 - `NSMenu`
 - `NSMenuItem`
 
@@ -172,7 +346,7 @@ I decided to go in a different direction, and implement three objects:
 - `menu`
 - `menu_item`
 
-This way the hierarchy is as follow: `menu_bar` owns all `menu` objects. Each menu object owns its `menu_item` objects. This lets `menu_bar` act as a container for the `menu`s and `menu_item`s with its own methods to handle them such as `menu_bar::add_menu`.
+This way the hierarchy is as follows: `menu_bar` owns all `menu` objects. Each menu object owns its `menu_item` objects. This lets `menu_bar` act as a container for the `menu`s and `menu_item`s with its own methods to handle them such as `menu_bar::add_menu`.
 
 This also dissipates the confusion of having several of the same `menu` objects acting respectively as a menu bar and sub-menus.
 
@@ -208,6 +382,11 @@ Leaf-UI
 │	│	└── menu_item.hpp
 │	│
 │	├── view
+│	│	├── button.hpp
+│	│	├── checkbox.hpp
+│	│	├── label.hpp
+│	│	├── slider.hpp
+│	│	├── text_field.hpp
 │	│	└── view.hpp
 │	│
 │	├── app_delegate.hpp
@@ -226,6 +405,11 @@ Leaf-UI
 	│	└── menu_item.mm
 	│
 	├── view
+	│	├── button.mm
+	│	├── checkbox.mm
+	│	├── label.mm
+	│	├── slider.mm
+	│	├── text_field.mm
 	│	└── view.mm
 	│
 	├── app_delegate.mm

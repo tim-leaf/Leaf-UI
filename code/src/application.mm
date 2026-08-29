@@ -13,8 +13,9 @@ leaf::application::application() {
 
 	[get_native() setActivationPolicy:NSApplicationActivationPolicyRegular];
 
-	[get_native() setDelegate:static_cast<id<NSApplicationDelegate>>(
-	                              _delegate.get_native())];
+	[get_native() setDelegate:static_cast     //
+	              <id<NSApplicationDelegate>> //
+	              (_delegate.get_native())];
 
 	// Use the customized (or not) menu bar
 	_menu_bar = leaf::menu_bar::create();

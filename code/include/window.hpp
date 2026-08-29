@@ -8,16 +8,17 @@
 #pragma once
 #include "object.hpp"
 #include "view.hpp"
+#include "window_delegate.hpp"
 #import <AppKit/AppKit.h>
+#include <functional>
 #include <memory>
 #include <string>
 #include <vector>
 
-// forward declation
-@class leaf_window_delegate;
-
 namespace leaf {
+
 // forward declation
+// class window_delegate;
 class application;
 
 class window : public object {
@@ -40,14 +41,14 @@ class window : public object {
 	void minimize();
 	void close();
 
-	void on_close();
+	void set_on_close(std::function<void()>);
 
 	// add widgets
 	void add_view(std::shared_ptr<view>);
 
   protected:
 	application *_owner;
-	leaf_window_delegate *_delegate;
+	window_delegate _delegate;
 
 	std::vector<std::shared_ptr<view>> views;
 };

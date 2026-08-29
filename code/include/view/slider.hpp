@@ -33,7 +33,15 @@ class slider : public view {
 
 	void set_neutral_value(const double);
 
-	double get_value();
+	void set_continuous(bool);
+	bool get_continuous() const;
+
+	void set_allows_tick_mark_values_only(const bool);
+	void set_number_of_tick_marks(const uint);
+
+	void set_slider_style(const NSSliderType);
+
+	double get_value() const;
 
   private:
 	double &value_ref;
