@@ -15,19 +15,18 @@ namespace leaf {
 
 class slider : public view {
   protected:
-	slider(double &value_ref);
-	slider(double &value_ref, const CGRect frame);
+	slider();
+	slider(const CGRect frame);
 
   public:
-	static std::shared_ptr<slider> create(double &value_ref);
-	static std::shared_ptr<slider> create(double &value_ref,
-	                                      const CGRect frame);
+	static std::shared_ptr<slider> create();
+	static std::shared_ptr<slider> create(const CGRect frame);
 
 	~slider();
 
 	NSSlider *get_native() const;
 
-	void add_action(std::function<void()>);
+	void set_action(std::function<void()>);
 
 	void set_max(const double);
 	void set_min(const double);
@@ -45,8 +44,6 @@ class slider : public view {
 	double get_value() const;
 
   private:
-	double &value_ref;
-
 	void init_callback();
 
 	std::unique_ptr<callback> _callback;

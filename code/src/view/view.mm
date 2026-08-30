@@ -6,6 +6,7 @@
 //
 
 #include "view.hpp"
+#include <sstream>
 
 #pragma mark - construction / destruction
 leaf::view::view() {
@@ -37,7 +38,14 @@ void leaf::view::set_superview(view *n_superview) {
 }
 
 leaf::view *leaf::view::get_superview() const {
-	return superview; //
+	if (superview) {
+		return superview; //
+	} else {
+		std::stringstream ss;
+		ss << "No superview for object: " << this;
+
+		throw std::runtime_error(ss.str());
+	}
 }
 
 #pragma mark - add views

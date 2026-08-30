@@ -10,13 +10,12 @@
 #include <thread>
 
 #include <leaf_ui.hpp>
-using namespace leaf;
 
 int main() {
 	std::cout << std::boolalpha;
 
 	// Application creation
-	auto app = application::create();
+	auto app = leaf::application::create();
 	os_log_info(logs::main, "Application launched");
 
 	auto app_menu = leaf::menu::create("App");
@@ -24,7 +23,7 @@ int main() {
 	// Quit App Item
 	auto quit_item =
 	    leaf::menu_item::create("Quit App", [&]() { app->quit(); });
-	quit_item->set_shortcut(shortcut{modifier_flag::command, "q"});
+	quit_item->set_shortcut(leaf::shortcut{leaf::modifier_flag::command, "q"});
 
 	app_menu->add_menu_item(std::move(quit_item));
 
@@ -33,7 +32,8 @@ int main() {
 	    ("Close Window", [&]() {                //
 		    [[NSApp keyWindow] close];
 	    });
-	close_window->set_shortcut(shortcut{modifier_flag::command, "w"});
+	close_window->set_shortcut(
+	    leaf::shortcut{leaf::modifier_flag::command, "w"});
 
 	app_menu->add_menu_item(std::move(close_window));
 	// Default Menu Bar -
@@ -137,9 +137,7 @@ int main() {
 	slide->set_slider_style(NSSliderTypeLinear);
 	// Slider
 
-	//// - ☢️ TESTS ☢️
-
-	//
+	//// ☢️ TESTS ☢️
 
 	NSProgressIndicator *prog =
 	    [[NSProgressIndicator alloc] initWithFrame:CGRect({300, 300, 100, 20})];
@@ -167,30 +165,32 @@ int main() {
 
 	////// ☢️ WIDGETS TESTS ☢️ - */
 
+	// Stack
 	auto stack = leaf::stack_view::create();
 	main_window->add_view(stack);
-
 	stack->pin_to_parent();
 
 	stack->set_orientation(NSUserInterfaceLayoutOrientationVertical);
-	stack->set_spacing(40.f);
 	stack->set_alignment(NSLayoutAttributeCenterX);
+	stack->set_spacing(20.f); 
 
 	stack->set_wants_layer(true);
 	stack->get_layer().borderWidth = 3.0;
 	stack->get_layer().borderColor = NSColor.redColor.CGColor;
 
-	auto button1 = leaf::button::create();
-	button1->set_action([] {
-		std::cout << "Button1"; //
-	});
-	stack->add_arranged_subview(button1);
+	// Widgets
+	auto title = leaf::label::create("\nForm Application\n");
+	stack->add_arranged_subview(title);
 
-	auto button2 = leaf::button::create();
-	button2->set_action([] {
-		std::cout << "Button2"; //
+	auto field = leaf::text_field::create("full name");
+	stack->add_arranged_subview(field);
+
+	auto test_button = leaf::button::create();
+	stack->add_arranged_subview(test_button);
+
+	test_button->set_action([&field] {
+		std::cout << field->get_text() << '\n'; //
 	});
-	stack->add_arranged_subview(button2);
 
 	// App execution
 	app->add_menu(std::move(app_menu));

@@ -14,30 +14,27 @@ namespace leaf {
 
 class checkbox : public view {
   protected:
-	checkbox(bool &);
-	checkbox(bool &, const CGRect frame);
+	checkbox();
+	checkbox(const CGRect frame);
 
   public:
-	static std::shared_ptr<checkbox> create(bool &);
-	static std::shared_ptr<checkbox> create(bool &, const CGRect frame);
+	static std::shared_ptr<checkbox> create();
+	static std::shared_ptr<checkbox> create(const CGRect frame);
 
 	~checkbox() override;
 
 	NSButton *get_native() const;
 
-	void add_action(std::function<void()>);
+	void set_title(const std::string &);
 
-	bool get_state() const;
+	void set_action(std::function<void()>);
 
 	void set_checked(bool);
-
-	void set_title(const std::string &);
 	bool is_checked() const;
 
   private:
-	bool &state_ref;
-
 	void init_callback();
+
 	std::unique_ptr<callback> _callback;
 	leaf_callback_target *_target;
 };

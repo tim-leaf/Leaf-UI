@@ -15,12 +15,13 @@ namespace leaf {
 
 class label : public view {
   protected:
-	label(std::string &n_text);
-	label(std::string &n_text, const CGRect frame);
+	label(const std::string &n_text);
+	label(const std::string &n_text, const CGRect frame);
 
   public:
-	static std::shared_ptr<label> create(std::string &text);
-	static std::shared_ptr<label> create(std::string &text, const CGRect frame);
+	static std::shared_ptr<label> create(const std::string &text);
+	static std::shared_ptr<label> create(const std::string &text,
+	                                     const CGRect frame);
 
 	~label() override;
 
@@ -31,9 +32,6 @@ class label : public view {
 
 	void set_bordered(const bool);
 	void set_draw_background(const bool);
-
-  private:
-	std::string &text_ref;
 };
 
 } // namespace leaf

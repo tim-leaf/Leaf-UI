@@ -15,12 +15,12 @@ namespace leaf {
 
 class text_field : public view {
   protected:
-	text_field(std::string &n_text);
-	text_field(std::string &n_text, const CGRect frame);
+	text_field(const std::string &n_text);
+	text_field(const std::string &n_text, const CGRect frame);
 
   public:
-	static std::shared_ptr<text_field> create(std::string &text);
-	static std::shared_ptr<text_field> create(std::string &text,
+	static std::shared_ptr<text_field> create(const std::string &text);
+	static std::shared_ptr<text_field> create(const std::string &text,
 	                                          const CGRect frame);
 
 	~text_field() override;
@@ -29,17 +29,12 @@ class text_field : public view {
 
 	void add_action(std::function<void()>);
 
-	void set_allows_empty(const bool);
-	bool get_allows_empty() const;
-
 	void set_text(const std::string &);
 	std::string get_text() const;
 
   private:
-	std::string &text_ref;
-	bool allows_empty = false;
-
 	void init_callback();
+
 	std::unique_ptr<callback> _callback;
 	leaf_callback_target *_target;
 };
