@@ -14,9 +14,12 @@
 namespace leaf {
 
 class view : public object {
+	friend class window;
+	friend class stack_view;
+
   protected:
 	view();
-	view(CGRect frame);
+	view(const CGRect frame);
 
 	view *superview = nullptr;
 	void set_superview(view *);
@@ -24,7 +27,7 @@ class view : public object {
 
   public:
 	static std::shared_ptr<view> create();
-	static std::shared_ptr<view> create(CGRect frame);
+	static std::shared_ptr<view> create(const CGRect frame);
 
 	~view() override;
 
@@ -63,15 +66,21 @@ class view : public object {
 	double get_alpha() const;
 
 	// Anchors
+	void pin_to_parent();
+
+	void set_top_anchor(NSLayoutYAxisAnchor *);
+	void set_bottom_anchor(NSLayoutYAxisAnchor *);
+	NSLayoutYAxisAnchor *centerY_anchor() const;
 	NSLayoutYAxisAnchor *top_anchor() const;
 	NSLayoutYAxisAnchor *bottom_anchor() const;
-	NSLayoutYAxisAnchor *centerY_anchor() const;
 
+	void set_leading_anchor(NSLayoutXAxisAnchor *);
+	void set_trailing_anchor(NSLayoutXAxisAnchor *);
+	NSLayoutXAxisAnchor *centerX_anchor() const;
 	NSLayoutXAxisAnchor *left_anchor() const;
 	NSLayoutXAxisAnchor *right_anchor() const;
 	NSLayoutXAxisAnchor *leading_anchor() const;
 	NSLayoutXAxisAnchor *trailing_anchor() const;
-	NSLayoutXAxisAnchor *centerX_anchor() const;
 
 	NSLayoutDimension *width_anchor() const;
 	NSLayoutDimension *height_anchor() const;

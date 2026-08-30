@@ -17,11 +17,11 @@ namespace leaf {
 class button : public view {
   protected:
 	button();
-	button(CGRect frame);
+	button(const CGRect frame);
 
   public:
 	static std::shared_ptr<button> create();
-	static std::shared_ptr<button> create(CGRect frame);
+	static std::shared_ptr<button> create(const CGRect frame);
 	~button() override;
 
 	NSButton *get_native() const;

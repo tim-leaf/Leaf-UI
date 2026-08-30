@@ -24,7 +24,7 @@ std::shared_ptr<leaf::label> leaf::label::create(std::string &n_text) {
 	return std::shared_ptr<leaf::label>(new label(n_text));
 }
 
-leaf::label::label(std::string &n_text, CGRect frame) : text_ref(n_text) {
+leaf::label::label(std::string &n_text, const CGRect frame) : text_ref(n_text) {
 	_native = [[NSTextField alloc] initWithFrame:frame];
 
 	NSString *ns_text = [NSString stringWithUTF8String:n_text.c_str()];
@@ -36,8 +36,8 @@ leaf::label::label(std::string &n_text, CGRect frame) : text_ref(n_text) {
 	[get_native() setDrawsBackground:NO];
 }
 
-std::shared_ptr<leaf::label> leaf::label::create //
-    (std::string &n_text, CGRect frame) {
+std::shared_ptr<leaf::label> leaf::label::create(std::string &n_text,
+                                                 const CGRect frame) {
 	return std::shared_ptr<leaf::label>(new label(n_text, frame));
 }
 

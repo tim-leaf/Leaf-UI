@@ -32,7 +32,7 @@ std::shared_ptr<leaf::checkbox> leaf::checkbox::create(bool &state) {
 	return std::shared_ptr<checkbox>(new checkbox(state)); //
 }
 
-leaf::checkbox::checkbox(bool &state, CGRect frame) : state_ref(state) {
+leaf::checkbox::checkbox(bool &state, const CGRect frame) : state_ref(state) {
 	_native = [[NSButton alloc] initWithFrame:frame]; //
 	[get_native() setButtonType:NSButtonTypeSwitch];
 
@@ -42,7 +42,7 @@ leaf::checkbox::checkbox(bool &state, CGRect frame) : state_ref(state) {
 }
 
 std::shared_ptr<leaf::checkbox> leaf::checkbox::create //
-    (bool &n_state, CGRect frame) {
+    (bool &n_state, const CGRect frame) {
 	return std::shared_ptr<checkbox>(new checkbox(n_state, frame)); //
 }
 

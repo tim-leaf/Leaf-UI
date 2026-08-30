@@ -16,11 +16,12 @@ namespace leaf {
 class slider : public view {
   protected:
 	slider(double &value_ref);
-	slider(double &value_ref, CGRect frame);
+	slider(double &value_ref, const CGRect frame);
 
   public:
 	static std::shared_ptr<slider> create(double &value_ref);
-	static std::shared_ptr<slider> create(double &value_ref, CGRect frame);
+	static std::shared_ptr<slider> create(double &value_ref,
+	                                      const CGRect frame);
 
 	~slider();
 

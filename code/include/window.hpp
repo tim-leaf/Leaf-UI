@@ -7,6 +7,7 @@
 
 #pragma once
 #include "object.hpp"
+#include "shared_view.hpp"
 #include "view.hpp"
 #include "window_delegate.hpp"
 #import <AppKit/AppKit.h>
@@ -18,17 +19,23 @@
 namespace leaf {
 
 // forward declation
-// class window_delegate;
 class application;
 
 class window : public object {
+  private:
+	window(const CGRect frame, const NSWindowStyleMask style_mask,
+	       const NSBackingStoreType backing_store = NSBackingStoreBuffered,
+	       bool _defer = true);
+
   public:
-	window(CGRect frame, NSWindowStyleMask style_mask,
-	       NSBackingStoreType backing_store = NSBackingStoreBuffered,
+	static std::shared_ptr<window>
+	create(const CGRect frame, const NSWindowStyleMask style_mask,
+	       const NSBackingStoreType backing_store = NSBackingStoreBuffered,
 	       bool _defer = true);
 	~window();
 
-	NSWindow *get_native() const;
+	NSWindow *get_window_native() const;
+	NSView *get_native() const;
 
 	// creation
 	void set_owner(application *);
@@ -47,9 +54,10 @@ class window : public object {
 	void add_view(std::shared_ptr<view>);
 
   protected:
-	application *_owner;
+	application *_owner = nullptr;
 	window_delegate _delegate;
 
+	std::shared_ptr<shared_view> content_view;
 	std::vector<std::shared_ptr<view>> views;
 };
 

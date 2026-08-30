@@ -16,11 +16,12 @@ namespace leaf {
 class text_field : public view {
   protected:
 	text_field(std::string &n_text);
-	text_field(std::string &n_text, CGRect frame);
+	text_field(std::string &n_text, const CGRect frame);
 
   public:
 	static std::shared_ptr<text_field> create(std::string &text);
-	static std::shared_ptr<text_field> create(std::string &text, CGRect frame);
+	static std::shared_ptr<text_field> create(std::string &text,
+	                                          const CGRect frame);
 
 	~text_field() override;
 

@@ -15,11 +15,11 @@ namespace leaf {
 class checkbox : public view {
   protected:
 	checkbox(bool &);
-	checkbox(bool &, CGRect frame);
+	checkbox(bool &, const CGRect frame);
 
   public:
 	static std::shared_ptr<checkbox> create(bool &);
-	static std::shared_ptr<checkbox> create(bool &, CGRect frame);
+	static std::shared_ptr<checkbox> create(bool &, const CGRect frame);
 
 	~checkbox() override;
 

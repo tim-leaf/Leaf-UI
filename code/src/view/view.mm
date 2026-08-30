@@ -16,11 +16,11 @@ std::shared_ptr<leaf::view> leaf::view::create() {
 	return std::shared_ptr<view>(new view()); //
 }
 
-leaf::view::view(CGRect frame) {
+leaf::view::view(const CGRect frame) {
 	_native = [[NSView alloc] initWithFrame:frame];
 }
 
-std::shared_ptr<leaf::view> leaf::view::create(CGRect frame) {
+std::shared_ptr<leaf::view> leaf::view::create(const CGRect frame) {
 	return std::shared_ptr<view>(new view(frame));
 }
 
@@ -108,6 +108,28 @@ double leaf::view::get_alpha() const {
 }
 
 // Anchors
+void leaf::view::pin_to_parent() {
+	set_translates_autoresizing_mask_into_constraints(false);
+
+	set_top_anchor(get_superview()->top_anchor());
+	set_bottom_anchor(get_superview()->bottom_anchor());
+	set_leading_anchor(get_superview()->leading_anchor());
+	set_trailing_anchor(get_superview()->trailing_anchor());
+}
+
+// Y Axis Anchors
+void leaf::view::set_top_anchor(NSLayoutYAxisAnchor *n_top_anchor) {
+	[[get_native() topAnchor] //
+	    constraintEqualToAnchor:n_top_anchor]
+	    .active = true;
+}
+
+void leaf::view::set_bottom_anchor(NSLayoutYAxisAnchor *n_bottom_anchor) {
+	[[get_native() bottomAnchor] //
+	    constraintEqualToAnchor:n_bottom_anchor]
+	    .active = true;
+}
+
 NSLayoutYAxisAnchor *leaf::view::top_anchor() const {
 	return get_native().topAnchor;
 }
@@ -116,6 +138,19 @@ NSLayoutYAxisAnchor *leaf::view::bottom_anchor() const {
 }
 NSLayoutYAxisAnchor *leaf::view::centerY_anchor() const {
 	return get_native().centerYAnchor;
+}
+
+// X Axis Anchors
+void leaf::view::set_leading_anchor(NSLayoutXAxisAnchor *n_leading_anchor) {
+	[[get_native() leadingAnchor] //
+	    constraintEqualToAnchor:n_leading_anchor]
+	    .active = true;
+}
+
+void leaf::view::set_trailing_anchor(NSLayoutXAxisAnchor *n_trailing_anchor) {
+	[[get_native() trailingAnchor] //
+	    constraintEqualToAnchor:n_trailing_anchor]
+	    .active = true;
 }
 
 NSLayoutXAxisAnchor *leaf::view::left_anchor() const {

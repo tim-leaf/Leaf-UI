@@ -55,6 +55,7 @@ main_window->show();
 - [x] `NSMenu`
 - [x] `NSMenuItem`
 - [x] `NSView`
+- [x] `NSStackView`
 - [x] `NSButton`
 - [x] `NSSlider`
 - [x] `NSTextField` 
@@ -385,7 +386,9 @@ Leaf-UI
 │	│	├── button.hpp
 │	│	├── checkbox.hpp
 │	│	├── label.hpp
+│	│	├── shared_view.hpp
 │	│	├── slider.hpp
+│	│	├── stack_view.hpp
 │	│	├── text_field.hpp
 │	│	└── view.hpp
 │	│
@@ -408,7 +411,9 @@ Leaf-UI
 	│	├── button.mm
 	│	├── checkbox.mm
 	│	├── label.mm
+	│	├── shared_view.mm
 	│	├── slider.mm
+	│	├── stack_view.mm
 	│	├── text_field.mm
 	│	└── view.mm
 	│

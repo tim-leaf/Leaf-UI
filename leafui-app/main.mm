@@ -45,7 +45,7 @@ int main() {
 	    []() -> bool { return true; });
 
 	// Window Creation
-	auto main_window = std::make_shared<window>(
+	auto main_window = leaf::window::create(
 	    CGRect({450, 200, 500, 500}),
 	    NSWindowStyleMaskClosable | NSWindowStyleMaskMiniaturizable |
 	        NSWindowStyleMaskResizable | NSWindowStyleMaskTitled);
@@ -56,6 +56,9 @@ int main() {
 
 	main_window->set_on_close(
 	    [] { os_log_debug(logs::main, "Window Closing"); });
+
+	////// - ☢️ WIDGETS TESTS ☢️
+	/*
 
 	// View
 	auto view = leaf::view::create(CGRect({10, 10, 480, 480}));
@@ -85,8 +88,8 @@ int main() {
 
 	//	txt_field->set_text("Test");
 	txt_field->add_action([txt_field, &test_string]() {
-		os_log_debug(logs::main, "%s  |  %s", test_string.c_str(),
-		             txt_field->get_text().c_str());
+	    os_log_debug(logs::main, "%s  |  %s", test_string.c_str(),
+	                 txt_field->get_text().c_str());
 	});
 	// text field
 
@@ -105,7 +108,7 @@ int main() {
 
 	check->set_title("Checkbox");
 	check->add_action([check, &test_bool] {
-		std::cout << check->get_state() << " | " << test_bool << '\n'; //
+	    std::cout << check->get_state() << " | " << test_bool << '\n'; //
 	});
 	// Checbox
 
@@ -127,8 +130,8 @@ int main() {
 	slide->set_continuous(true);
 
 	slide->add_action([slide, slider_label, &test_value, &string_value] {
-		std::cout << slide->get_value() << " | " << test_value << '\n'; //
-		slider_label->set_text("Slider: " + std::to_string(test_value));
+	    std::cout << slide->get_value() << " | " << test_value << '\n'; //
+	    slider_label->set_text("Slider: " + std::to_string(test_value));
 	});
 
 	slide->set_slider_style(NSSliderTypeLinear);
@@ -152,7 +155,42 @@ int main() {
 
 	[view->get_native() addSubview:popup];
 
-	//// ☢️ TESTS ☢️ -
+	NSSegmentedControl *segment =
+	    [[NSSegmentedControl alloc] initWithFrame:CGRect({40, 40, 40, 40})];
+	[view->get_native() addSubview:segment];
+
+	NSStepper *stepper =
+	    [[NSStepper alloc] initWithFrame:CGRect({150, 150, 40, 40})];
+	[view->get_native() addSubview:stepper];
+
+	// NSImage *img = [[NSImage alloc] initWithSize:CGSize({200, 200})];
+
+	////// ☢️ WIDGETS TESTS ☢️ - */
+
+	auto stack = leaf::stack_view::create();
+	main_window->add_view(stack);
+
+	stack->pin_to_parent();
+
+	stack->set_orientation(NSUserInterfaceLayoutOrientationVertical);
+	stack->set_spacing(40.f);
+	stack->set_alignment(NSLayoutAttributeCenterX);
+
+	stack->set_wants_layer(true);
+	stack->get_layer().borderWidth = 3.0;
+	stack->get_layer().borderColor = NSColor.redColor.CGColor;
+
+	auto button1 = leaf::button::create();
+	button1->set_action([] {
+		std::cout << "Button1"; //
+	});
+	stack->add_arranged_subview(button1);
+
+	auto button2 = leaf::button::create();
+	button2->set_action([] {
+		std::cout << "Button2"; //
+	});
+	stack->add_arranged_subview(button2);
 
 	// App execution
 	app->add_menu(std::move(app_menu));

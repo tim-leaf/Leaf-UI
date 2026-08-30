@@ -10,28 +10,42 @@
 #include "window_delegate.hpp"
 #include <iostream>
 
-leaf::window::window(CGRect frame, NSWindowStyleMask style_mask,
-                     NSBackingStoreType backing_store, bool _defer) {
+leaf::window::window(const CGRect frame, const NSWindowStyleMask style_mask,
+                     const NSBackingStoreType backing_store, bool _defer) {
 
 	_native = [[NSWindow alloc] initWithContentRect:frame
 	                                      styleMask:style_mask
 	                                        backing:backing_store
 	                                          defer:_defer];
 
-	[get_native() setRestorationClass:nil];
-	[get_native() setIdentifier:nil];
+	[get_window_native() setRestorationClass:nil];
+	[get_window_native() setIdentifier:nil];
 
-	[get_native() setDelegate:static_cast //
-	              <id<NSWindowDelegate>>  //
-	              (_delegate.get_native())];
+	[get_window_native() setDelegate:static_cast //
+	                     <id<NSWindowDelegate>>  //
+	                     (_delegate.get_native())];
+
+	content_view = leaf::shared_view::create(get_window_native().contentView);
+}
+
+std::shared_ptr<leaf::window>
+leaf::window::create(const CGRect frame, const NSWindowStyleMask style_mask,
+                     const NSBackingStoreType backing_store, bool _defer) {
+	return std::shared_ptr<window>(
+	    new window(frame, style_mask, backing_store, _defer) //
+	);
 }
 
 leaf::window::~window() { //
 	[_native release];
 }
 
-NSWindow *leaf::window::get_native() const {
+NSWindow *leaf::window::get_window_native() const {
 	return static_cast<NSWindow *>(_native); //
+}
+
+NSView *leaf::window::get_native() const {
+	return static_cast<NSView *>(get_window_native().contentView); //
 }
 
 void leaf::window::set_owner(application *app_ptr) {
@@ -39,22 +53,22 @@ void leaf::window::set_owner(application *app_ptr) {
 }
 
 void leaf::window::show() { //
-	[get_native() makeKeyAndOrderFront:nil];
+	[get_window_native() makeKeyAndOrderFront:nil];
 }
 void leaf::window::hide() { //
-	[get_native() orderOut:nil];
+	[get_window_native() orderOut:nil];
 }
 
 void leaf::window::minimize() { //
-	[get_native() miniaturize:nil];
+	[get_window_native() miniaturize:nil];
 }
 void leaf::window::close() { //
-	[get_native() close];
+	[get_window_native() close];
 }
 
 void leaf::window::set_title(const std::string &title) {
 	NSString *ns_title = [NSString stringWithUTF8String:title.c_str()];
-	[get_native() setTitle:ns_title];
+	[get_window_native() setTitle:ns_title];
 }
 
 void leaf::window::set_on_close //
@@ -63,8 +77,9 @@ void leaf::window::set_on_close //
 	_delegate.on_close = n_action;
 }
 
-void leaf::window::add_view(std::shared_ptr<view> view) {
-	views.push_back(view);
+void leaf::window::add_view(std::shared_ptr<view> n_view) {
+	views.push_back(n_view);
+	n_view->set_superview(this->content_view.get());
 
-	[[get_native() contentView] addSubview:view->get_native()];
+	[content_view->get_native() addSubview:n_view->get_native()];
 }

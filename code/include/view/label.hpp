@@ -16,11 +16,11 @@ namespace leaf {
 class label : public view {
   protected:
 	label(std::string &n_text);
-	label(std::string &n_text, CGRect frame);
+	label(std::string &n_text, const CGRect frame);
 
   public:
 	static std::shared_ptr<label> create(std::string &text);
-	static std::shared_ptr<label> create(std::string &text, CGRect frame);
+	static std::shared_ptr<label> create(std::string &text, const CGRect frame);
 
 	~label() override;
 

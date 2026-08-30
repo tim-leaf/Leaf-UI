@@ -44,7 +44,7 @@ std::shared_ptr<leaf::text_field> leaf::text_field::create //
 }
 
 leaf::text_field::text_field //
-    (std::string &n_text, CGRect frame)
+    (std::string &n_text, const CGRect frame)
     : text_ref(n_text) {
 
 	_native = [[NSTextField alloc] initWithFrame:frame]; //
@@ -56,7 +56,7 @@ leaf::text_field::text_field //
 }
 
 std::shared_ptr<leaf::text_field> leaf::text_field::create //
-    (std::string &n_text, CGRect frame) {
+    (std::string &n_text, const CGRect frame) {
 
 	return std::shared_ptr<text_field>(new text_field(n_text, frame));
 }

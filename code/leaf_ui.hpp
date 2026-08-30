@@ -5,8 +5,6 @@
 //  Created by Tim Le Flem on 2026-08-20.
 //
 
-//// RENAME: LeafKit
-
 #pragma once
 #include "app_delegate.hpp"
 #include "application.hpp"
@@ -27,6 +25,8 @@
 #include "button.hpp"
 #include "checkbox.hpp"
 #include "label.hpp"
+#include "shared_view.hpp"
 #include "slider.hpp"
+#include "stack_view.hpp"
 #include "text_field.hpp"
 #include "view.hpp"

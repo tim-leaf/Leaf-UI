@@ -22,7 +22,7 @@ std::shared_ptr<leaf::button> leaf::button::create() {
 	return std::shared_ptr<button>(new button());
 }
 
-leaf::button::button(CGRect frame) {
+leaf::button::button(const CGRect frame) {
 	_native = [[NSButton alloc] initWithFrame:frame]; //
 
 	_callback = leaf::callback::create();
@@ -32,7 +32,7 @@ leaf::button::button(CGRect frame) {
 	[get_native() setTarget:_target];
 }
 
-std::shared_ptr<leaf::button> leaf::button::create(CGRect frame) {
+std::shared_ptr<leaf::button> leaf::button::create(const CGRect frame) {
 	return std::shared_ptr<button>(new button(frame));
 }
 

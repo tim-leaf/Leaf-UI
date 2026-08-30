@@ -32,7 +32,7 @@ std::shared_ptr<leaf::slider> leaf::slider::create //
 	return std::shared_ptr<slider>(new slider(n_value_ref));
 }
 
-leaf::slider::slider(double &n_value_ref, CGRect frame)
+leaf::slider::slider(double &n_value_ref, const CGRect frame)
     : value_ref(n_value_ref) {
 
 	_native = [[NSSlider alloc] initWithFrame:frame]; //
@@ -42,7 +42,7 @@ leaf::slider::slider(double &n_value_ref, CGRect frame)
 }
 
 std::shared_ptr<leaf::slider> leaf::slider::create //
-    (double &n_value_ref, CGRect frame) {
+    (double &n_value_ref, const CGRect frame) {
 
 	return std::shared_ptr<slider>(new slider(n_value_ref, frame));
 }
