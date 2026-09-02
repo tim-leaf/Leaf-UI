@@ -25,7 +25,7 @@ NSWindow *main_window = [[NSWindow alloc]
 
 ```cpp
 // after
-auto main_window = std::make_shared<window>(
+auto main_window = leaf::window::create(
 		// CGrect frame
 		CGRect({0, 0, 500, 500}),
 		
@@ -37,7 +37,7 @@ auto main_window = std::make_shared<window>(
 		
 		// defer (optional), default = true
 		true
-);
+); // -> std::shared_ptr<window>
 
 app->add_window(main_window);
 
@@ -48,17 +48,38 @@ main_window->show();
 
 ## Classes Handled
 
+### Application & Window
+
 - [x] `NSApplication`
-- [x] `NSAppDelegate`
+- [x] `NSApplicationDelegate`
 - [x] `NSWindow`
 - [x] `NSWindowDelegate`
+
+
+### Objects
+
+- [x] `NSImage`
+- [x] `NSData`
+- [x] `NSTimer`
+
+
+## Menus
+
 - [x] `NSMenu`
 - [x] `NSMenuItem`
+
+
+### Views
+
 - [x] `NSView`
+- [x] `NSImageView`
 - [x] `NSStackView`
+- [x] `NSPopUpButton`
+- [x] `NSSegmentedControl`
 - [x] `NSButton`
 - [x] `NSSlider`
 - [x] `NSTextField` 
+
 
 
 ## Specificities
@@ -82,21 +103,6 @@ Here the `NSSliderType` can be modified through either the C++ or Objective-C me
 
 This is particularly useful for behaviors that are not yet supported by Leaf-UI.
 
-However, bypassing already wrapped methods can have some unintended effects at times, for example:
-```objc
-double value = 0;
-auto slider = slider::create(value);
-
-[slider->get_native() setDoubleValue:7];
-```
-
-In this example, initializing `NSSlider*`'s value through Objective-C doesn't update `value` which is referenced through the `slider` object. 
-
-The `[get_native() method]` should be limited to un-handled cases.
-
-In short:
-> ⚠️ **Native methods bypass Leaf-UI's synchronization logic** ⚠️
-
 
 ---
 ### Ownership
@@ -114,19 +120,6 @@ auto app = leaf::application::create(); // unique_ptr
 bool x = true;
 auto toggle_x = leaf::checkbox::create(x);
 ```
-
-
-#### State Reference
-
-Some Leaf-UI widgets like `slider` and `checkbox` will store a reference to an external value, and synchronize with it upon ***activation*** (see Callbacks section).
-
-For example, to create a slider:
-```cpp
-double test_value = 0.0;
-auto slide = leaf::slider::create(test_value);
-```
-
-Now upon activation, `slider::value_ref` (`test_value` here) is set to : `value_ref = [get_native() doubleValue]`.
 
 
 ---
@@ -215,44 +208,6 @@ So, in order:
 | slider      | value change        |
 
 
-#### Add Actions
-
-In some widgets such as `slider` and `checkbox`, the basic synchronisation behavior can't be overriden. However, custom behavior can still be added to the widget upon activation, with the `add_action` method.
-
-This adds behaviors right after the synchronisation of the referenced value and the UI's value. 
-
-So:
-```cpp
-bool x = true;
-auto check = leaf::checkbox::create(x);
-
-check->add_action([check] {
-	std::cout << "Hello ";
-});
-
-check->add_action([check] {
-	std::cout << "World!";
-});
-```
-
-Now, upon activation of the checkbox, the console will print: `Hello World!`. The behaviors are executed in order, from first to last, right after the slider-value and external reference synchronisation.
-
-So:
-```
-AppKit event
-     ↓
-Leaf-UI callback
-     ↓
-synchronize external state
-     ↓
-user action #1
-     ↓
-user action #2
-     ↓
-	...
-```
-
-
 ---
 ### AppDelegate
 
@@ -260,12 +215,15 @@ In order to be able to customize the applications, an app_delegate class was cre
 
 In order to do so, the `application_delegate` class was given default hooks, like:
 ```cpp
-std::function<bool()> should_terminate_after_last_window_closed = []() { return true; };
+std::function<bool()> should_terminate_after_last_window_closed = 
+[]{ 
+	return true; 
+};
 ```
 
 or:
 ```cpp
-std::function<void()> on_quit = []() {};
+std::function<void()> on_quit = []{};
 ```
 
 
@@ -302,8 +260,7 @@ app.on_quit(
 	[&]() -> void { 
 		some_object.destroy();
 		delete some_ptr;
-		os_log_info(logs::main, 
-			"Application is quitting\n");
+		os_log_info(logs::main, "Application is quitting\n");
 	}
 );
 ```
@@ -366,26 +323,67 @@ Menu Bar
 ```
 
 
+---
+### Image View Rendering
+
+In order to choose the interpolation style of the `image`s rendered through `image_view`, create an Objective-C class `leaf_image_cell` like so:
+```objc
+@interface leaf_image_cell : NSImageCell {
+	NSImageInterpolation _interpolation;
+} 
+
+-(void)setInterpolation:(NSImageInterpolation)interpolation;
+@end
+```
+
+And inside the `leaf_image_cell` I override the `drawWithFrame` method, as follows: 
+```objc
+- (void)drawWithFrame:(NSRect)cellFrame inView:(NSView *)controlView {
+	NSGraphicsContext *current = [NSGraphicsContext currentContext];
+	
+	NSImageInterpolation previous = current.imageInterpolation;
+	current.imageInterpolation = _interpolation;
+	
+	[super drawWithFrame:cellFrame inView:controlView];
+	
+	current.imageInterpolation = previous;
+}
+```
+
+Without that, it's impossible to set the correct value to `imageInterpolation` in time for it to render our image with the correct interpolation mode. 
+
+
 ## Project Tree
 
 ```
 Leaf-UI
 │
-├── leaf_ui.hpp 	// entry point of the library
+├── leaf_ui.hpp 			// entry point of the library
 │
-├── include
-│	├── callback
+├── include/
+│	├── callback/
 │	│	└── callback.hpp
 │	│
-│	├── menu
+│	├── helpers/
+│	│	└── shortcut.hpp
+│	│
+│	├── menu/
 │	│	├── menu.hpp
 │	│	├── menu_bar.hpp
 │	│	└── menu_item.hpp
 │	│
-│	├── view
+│	├── object/
+│	│	├── data.hpp
+│	│	├── image.hpp
+│	│	└── timer.hpp
+│	│
+│	├── view/
 │	│	├── button.hpp
 │	│	├── checkbox.hpp
+│	│	├── image_view.hpp
 │	│	├── label.hpp
+│	│	├── popup.hpp
+│	│	├── segmented_control.hpp
 │	│	├── shared_view.hpp
 │	│	├── slider.hpp
 │	│	├── stack_view.hpp
@@ -398,19 +396,27 @@ Leaf-UI
 │	├── window.hpp
 │	└── window_delegate.hpp
 │
-└── src
-	├── callback
+└── src/
+	├── callback/
 	│	└── callback.mm
 	│
-	├── menu
+	├── menu/
 	│	├── menu.mm
 	│	├── menu_bar.mm
 	│	└── menu_item.mm
 	│
-	├── view
+	├── object/
+	│	├── data.mm
+	│	├── image.mm
+	│	└── timer.mm
+	│
+	├── view/
 	│	├── button.mm
 	│	├── checkbox.mm
+	│	├── image_view.mm
 	│	├── label.mm
+	│	├── popup.mm
+	│	├── segmented_control.mm
 	│	├── shared_view.mm
 	│	├── slider.mm
 	│	├── stack_view.mm

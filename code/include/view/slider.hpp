@@ -41,7 +41,11 @@ class slider : public view {
 
 	void set_slider_style(const NSSliderType);
 
-	double get_value() const;
+	void set_double(const double);
+	double get_double() const;
+
+	void set_int(const int);
+	int get_int() const;
 
   private:
 	void init_callback();

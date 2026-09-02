@@ -37,6 +37,14 @@ void leaf::view::set_superview(view *n_superview) {
 	superview = n_superview; //
 }
 
+#pragma mark - subviews
+void leaf::view::add_subview(std::shared_ptr<view> n_subview) {
+	[get_native() addSubview:n_subview->get_native()];
+	n_subview->set_superview(this);
+
+	subviews.push_back(n_subview);
+}
+
 leaf::view *leaf::view::get_superview() const {
 	if (superview) {
 		return superview; //
@@ -48,12 +56,16 @@ leaf::view *leaf::view::get_superview() const {
 	}
 }
 
-#pragma mark - add views
-void leaf::view::add_subview(std::shared_ptr<view> n_subview) {
-	[get_native() addSubview:n_subview->get_native()];
-	n_subview->set_superview(this);
+#pragma mark - Debug
+void leaf::view::set_debug(const bool n_value, NSColor *n_color) {
+	if (n_value) {
+		this->set_wants_layer(true);
 
-	subviews.push_back(n_subview);
+		this->get_layer().borderWidth = 2.0;
+		this->get_layer().borderColor = n_color.CGColor;
+	} else {
+		this->set_wants_layer(false);
+	}
 }
 
 #pragma mark - control state
@@ -115,8 +127,18 @@ double leaf::view::get_alpha() const {
 	return get_native().alphaValue; //
 }
 
+void leaf::view::set_needs_display(const bool n_value) {
+	[get_native() setNeedsDisplay:n_value]; //
+}
+
 // Anchors
 void leaf::view::pin_to_parent() {
+	if (!superview) {
+		std::stringstream ss;
+		ss << "Missing superview from object: " << this << '\n';
+		throw std::runtime_error(ss.str());
+	}
+
 	set_translates_autoresizing_mask_into_constraints(false);
 
 	set_top_anchor(get_superview()->top_anchor());

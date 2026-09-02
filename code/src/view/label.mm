@@ -58,6 +58,11 @@ void leaf::label::set_text(const std::string &n_text) {
 	[get_native() setStringValue:ns_n_text];
 }
 
+void leaf::label::set_text(const std::stringstream &n_text) {
+	NSString *ns_n_text = [NSString stringWithUTF8String:n_text.str().c_str()];
+	[get_native() setStringValue:ns_n_text];
+}
+
 void leaf::label::set_bordered(const bool n_value) {
 	[get_native() setBordered:n_value];
 }

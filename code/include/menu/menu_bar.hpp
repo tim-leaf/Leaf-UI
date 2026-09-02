@@ -18,15 +18,15 @@ class menu_bar : public object {
 	menu_bar();
 
   public:
-	static std::unique_ptr<menu_bar> create();
+	static std::shared_ptr<menu_bar> create();
 	~menu_bar() override;
 
-	void add_menu(std::unique_ptr<menu> n_menu);
+	void add_menu(std::shared_ptr<menu> n_menu);
 
 	NSMenu *get_native() const;
 
   private:
-	std::vector<std::unique_ptr<menu>> menus;
+	std::vector<std::shared_ptr<menu>> menus;
 };
 
 } // namespace leaf

@@ -28,7 +28,7 @@ class application : object {
 
 	int run();
 
-	void add_menu(std::unique_ptr<menu>);
+	void add_menu(std::shared_ptr<menu>);
 
 	void add_window(std::shared_ptr<window>);
 	void remove_window(window *);
@@ -43,15 +43,15 @@ class application : object {
 	void set_on_hide(std::function<void()>);
 	void set_should_terminate_on_all_windows_closed //
 	    (std::function<bool()>);
-
 #pragma mark App Delegate methods override -
 
   private:
 	NSApplication *app_native = nullptr;
 	app_delegate _delegate;
 
-	std::unique_ptr<menu_bar> _menu_bar;
+	std::shared_ptr<menu_bar> _menu_bar;
 	std::vector<std::shared_ptr<window>> windows;
+	std::vector<std::shared_ptr<object>> objects;
 };
 
 } // namespace leaf

@@ -24,9 +24,20 @@
 // View
 #include "button.hpp"
 #include "checkbox.hpp"
+#include "image_view.hpp"
 #include "label.hpp"
+#include "popup.hpp"
+#include "segmented_control.hpp"
 #include "shared_view.hpp"
 #include "slider.hpp"
 #include "stack_view.hpp"
 #include "text_field.hpp"
 #include "view.hpp"
+
+// Objects
+#include "data.hpp"
+#include "image.hpp"
+#include "timer.hpp"
+
+// Helpers
+#include "shortcut.hpp"

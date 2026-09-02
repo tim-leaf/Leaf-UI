@@ -20,15 +20,15 @@ class menu : object {
 	menu(const std::string &title);
 
   public:
-	static std::unique_ptr<menu> create(const std::string &title);
+	static std::shared_ptr<menu> create(const std::string &title);
 	~menu() override;
 
-	void add_menu_item(std::unique_ptr<menu_item>);
+	void add_menu_item(std::shared_ptr<menu_item>);
 
 	NSMenu *get_native() const;
 
   private:
-	std::vector<std::unique_ptr<menu_item>> menu_items;
+	std::vector<std::shared_ptr<menu_item>> menu_items;
 };
 
 } // namespace leaf

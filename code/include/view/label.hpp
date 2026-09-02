@@ -9,6 +9,7 @@
 #include "view.hpp"
 #import <AppKit/AppKit.h>
 #include <memory>
+#include <sstream>
 #include <string>
 
 namespace leaf {
@@ -29,6 +30,7 @@ class label : public view {
 	NSTextField *get_native() const;
 
 	void set_text(const std::string &);
+	void set_text(const std::stringstream &);
 
 	void set_bordered(const bool);
 	void set_draw_background(const bool);

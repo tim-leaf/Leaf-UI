@@ -10,6 +10,8 @@
 #pragma mark - construction / destruction
 leaf::stack_view::stack_view() {
 	_native = [[NSStackView alloc] init]; //
+
+	set_orientation(NSUserInterfaceLayoutOrientationVertical);
 }
 
 std::shared_ptr<leaf::stack_view> leaf::stack_view::create() {
@@ -18,6 +20,8 @@ std::shared_ptr<leaf::stack_view> leaf::stack_view::create() {
 
 leaf::stack_view::stack_view(const CGRect frame) {
 	_native = [[NSStackView alloc] initWithFrame:frame]; //
+
+	set_orientation(NSUserInterfaceLayoutOrientationVertical);
 }
 
 std::shared_ptr<leaf::stack_view> leaf::stack_view::create(const CGRect frame) {

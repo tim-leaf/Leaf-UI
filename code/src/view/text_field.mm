@@ -58,12 +58,17 @@ NSTextField *leaf::text_field::get_native() const {
 	return static_cast<NSTextField *>(_native); //
 }
 
-void leaf::text_field::add_action(std::function<void()> n_action) {
+void leaf::text_field::set_action(std::function<void()> n_action) {
 	_callback->set_action(n_action);
 }
 
 void leaf::text_field::set_text(const std::string &n_text) {
 	NSString *ns_n_text = [NSString stringWithUTF8String:n_text.c_str()];
+	[get_native() setStringValue:ns_n_text];
+}
+
+void leaf::text_field::set_text(const std::stringstream &n_text) {
+	NSString *ns_n_text = [NSString stringWithUTF8String:n_text.str().c_str()];
 	[get_native() setStringValue:ns_n_text];
 }
 

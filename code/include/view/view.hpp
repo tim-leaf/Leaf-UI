@@ -36,6 +36,9 @@ class view : public object {
 	void add_subview(std::shared_ptr<view>);
 	view *get_superview() const;
 
+	/// Shows the border of the view
+	void set_debug(const bool, NSColor * = NSColor.systemRedColor);
+
 	// control state
 	void show();
 	void hide();
@@ -64,6 +67,9 @@ class view : public object {
 	// Alpha
 	void set_alpha(double);
 	double get_alpha() const;
+
+	// Display
+	void set_needs_display(const bool = true);
 
 	// Anchors
 	void pin_to_parent();

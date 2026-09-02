@@ -25,7 +25,7 @@ int main() {
 	    leaf::menu_item::create("Quit App", [&]() { app->quit(); });
 	quit_item->set_shortcut(leaf::shortcut{leaf::modifier_flag::command, "q"});
 
-	app_menu->add_menu_item(std::move(quit_item));
+	app_menu->add_menu_item(quit_item);
 
 	// Close Window Item
 	auto close_window = leaf::menu_item::create //
@@ -35,8 +35,7 @@ int main() {
 	close_window->set_shortcut(
 	    leaf::shortcut{leaf::modifier_flag::command, "w"});
 
-	app_menu->add_menu_item(std::move(close_window));
-	// Default Menu Bar -
+	app_menu->add_menu_item(close_window);
 
 	// App Delegates override
 	app->set_on_quit([]() -> void { os_log_info(logs::main, "App closing"); });
@@ -58,141 +57,13 @@ int main() {
 	    [] { os_log_debug(logs::main, "Window Closing"); });
 
 	////// - ☢️ WIDGETS TESTS ☢️
-	/*
 
-	// View
-	auto view = leaf::view::create(CGRect({10, 10, 480, 480}));
-	main_window->add_view(view);
+	auto timer = leaf::timer::create(1, true);
+	timer->set_action([] { std::cout << "PROUT\n"; });
 
-	view->set_wants_layer(true);
-	view->get_layer().borderWidth = 2.0;
-	view->get_layer().borderColor = NSColor.systemPinkColor.CGColor;
-
-	// Button Sub View
-	auto button = leaf::button::create(CGRect({350, 350, 150, 100}));
-	view->add_subview(button);
-
-	button->set_wants_layer(true);
-	button->get_layer().borderWidth = 2.0;
-	button->get_layer().borderColor = NSColor.systemYellowColor.CGColor;
-
-	button->set_title("Nice Button");
-	button->set_action([]() { os_log_debug(logs::main, "Button pressed"); });
-
-	// text field
-	std::string test_string = "test";
-
-	auto txt_field =
-	    leaf::text_field::create(test_string, CGRect({50, 50, 100, 20}));
-	view->add_subview(txt_field);
-
-	//	txt_field->set_text("Test");
-	txt_field->add_action([txt_field, &test_string]() {
-	    os_log_debug(logs::main, "%s  |  %s", test_string.c_str(),
-	                 txt_field->get_text().c_str());
-	});
-	// text field
-
-	// label
-	std::string label_text = "Test Label";
-	auto test_label =
-	    leaf::label::create(label_text, CGRect({200, 200, 100, 100}));
-	view->add_subview(test_label);
-	// label
-
-	// Checbox
-	bool test_bool = true;
-
-	auto check = leaf::checkbox::create(test_bool, CGRect({100, 100, 100, 50}));
-	view->add_subview(check);
-
-	check->set_title("Checkbox");
-	check->add_action([check, &test_bool] {
-	    std::cout << check->get_state() << " | " << test_bool << '\n'; //
-	});
-	// Checbox
-
-	// Slider
-	double test_value = 0.0;
-	std::string string_value = "Slider: " + std::to_string(test_value);
-
-	auto slider_label =
-	    label::create(string_value, CGRect({150, 280, 100, 100}));
-	view->add_subview(slider_label);
-
-	auto slide = leaf::slider::create(test_value, CGRect({80, 280, 100, 100}));
-	view->add_subview(slide);
-
-	slide->set_min(-10.0);
-	slide->set_max(+10.0);
-	//	slide->set_neutral_value(0);
-
-	slide->set_continuous(true);
-
-	slide->add_action([slide, slider_label, &test_value, &string_value] {
-	    std::cout << slide->get_value() << " | " << test_value << '\n'; //
-	    slider_label->set_text("Slider: " + std::to_string(test_value));
-	});
-
-	slide->set_slider_style(NSSliderTypeLinear);
-	// Slider
-
-	//// ☢️ TESTS ☢️
-
-	NSProgressIndicator *prog =
-	    [[NSProgressIndicator alloc] initWithFrame:CGRect({300, 300, 100, 20})];
-	[view->get_native() addSubview:prog];
-
-	NSPopUpButton *popup =
-	    [[NSPopUpButton alloc] initWithFrame:CGRect({100, 300, 100, 20})
-	                               pullsDown:true];
-
-	[popup addItemWithTitle:@"Option1"];
-	[popup addItemWithTitle:@"Option2"];
-	[popup addItemWithTitle:@"Option3"];
-
-	[view->get_native() addSubview:popup];
-
-	NSSegmentedControl *segment =
-	    [[NSSegmentedControl alloc] initWithFrame:CGRect({40, 40, 40, 40})];
-	[view->get_native() addSubview:segment];
-
-	NSStepper *stepper =
-	    [[NSStepper alloc] initWithFrame:CGRect({150, 150, 40, 40})];
-	[view->get_native() addSubview:stepper];
-
-	// NSImage *img = [[NSImage alloc] initWithSize:CGSize({200, 200})];
-
-	////// ☢️ WIDGETS TESTS ☢️ - */
-
-	// Stack
-	auto stack = leaf::stack_view::create();
-	main_window->add_view(stack);
-	stack->pin_to_parent();
-
-	stack->set_orientation(NSUserInterfaceLayoutOrientationVertical);
-	stack->set_alignment(NSLayoutAttributeCenterX);
-	stack->set_spacing(20.f); 
-
-	stack->set_wants_layer(true);
-	stack->get_layer().borderWidth = 3.0;
-	stack->get_layer().borderColor = NSColor.redColor.CGColor;
-
-	// Widgets
-	auto title = leaf::label::create("\nForm Application\n");
-	stack->add_arranged_subview(title);
-
-	auto field = leaf::text_field::create("full name");
-	stack->add_arranged_subview(field);
-
-	auto test_button = leaf::button::create();
-	stack->add_arranged_subview(test_button);
-
-	test_button->set_action([&field] {
-		std::cout << field->get_text() << '\n'; //
-	});
+	////// ☢️ WIDGETS TESTS ☢️ -
 
 	// App execution
-	app->add_menu(std::move(app_menu));
+	app->add_menu(app_menu);
 	return app->run();
 }

@@ -7,6 +7,7 @@
 
 #pragma once
 #include "callback.hpp"
+#include "image.hpp"
 #include "view.hpp"
 #import <AppKit/AppKit.h>
 #include <functional>
@@ -28,6 +29,9 @@ class button : public view {
 
 	void set_title(const std::string &title);
 	void set_action(std::function<void()>);
+
+	void set_style(const NSBezelStyle);
+	void set_image(std::shared_ptr<image>);
 
   private:
 	std::unique_ptr<callback> _callback;

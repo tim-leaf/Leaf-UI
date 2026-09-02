@@ -87,6 +87,18 @@ void leaf::slider::set_slider_style(const NSSliderType type) {
 	[get_native() setSliderType:type]; //
 }
 
-double leaf::slider::get_value() const {
+void leaf::slider::set_double(const double n_value) {
+	[get_native() setDoubleValue:n_value]; //
+}
+
+double leaf::slider::get_double() const {
 	return get_native().doubleValue; //
+}
+
+void leaf::slider::set_int(const int n_value) {
+	[get_native() setIntValue:n_value]; //
+}
+
+int leaf::slider::get_int() const {
+	return get_native().intValue; //
 }

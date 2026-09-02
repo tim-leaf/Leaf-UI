@@ -55,3 +55,11 @@ void leaf::button::set_title(const std::string &title) {
 void leaf::button::set_action(std::function<void()> n_action) {
 	_callback->set_action(n_action); //
 }
+
+void leaf::button::set_style(const NSBezelStyle style) {
+	[get_native() setBezelStyle:style]; //
+}
+
+void leaf::button::set_image(std::shared_ptr<image> img) {
+	[get_native() setImage:img->get_native()]; //
+}

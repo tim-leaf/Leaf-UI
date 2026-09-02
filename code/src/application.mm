@@ -19,6 +19,8 @@ leaf::application::application() {
 
 	// Use the customized (or not) menu bar
 	_menu_bar = leaf::menu_bar::create();
+
+	[get_native() retain];
 }
 
 std::unique_ptr<leaf::application> leaf::application::create() {
@@ -60,8 +62,8 @@ void leaf::application::remove_window(window *target) {
 	}
 }
 
-void leaf::application::add_menu(std::unique_ptr<menu> n_menu) {
-	_menu_bar->add_menu(std::move(n_menu));
+void leaf::application::add_menu(std::shared_ptr<menu> n_menu) {
+	_menu_bar->add_menu(n_menu);
 }
 
 #pragma mark - App Delegate methods override
