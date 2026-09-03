@@ -46,6 +46,10 @@ void leaf::application::quit() {
 	[get_native() terminate:nil]; //
 }
 
+void leaf::application::close_active_window() {
+	[[NSApp keyWindow] close]; //
+}
+
 void leaf::application::add_window(std::shared_ptr<window> n_window) {
 	n_window->set_owner(this);
 	windows.push_back(n_window);

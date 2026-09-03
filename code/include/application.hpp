@@ -34,6 +34,7 @@ class application : object {
 	void remove_window(window *);
 
 	void quit();
+	void close_active_window();
 
 	NSApplication *get_native() const;
 

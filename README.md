@@ -46,6 +46,236 @@ main_window->show();
 ```
 
 
+## Quick Start
+
+### 1. Set Up the Xcode Project
+
+This tutorial assumes you use the latest version of Xcode as your IDE.
+
+To use this library, create a new macOS App and select "Storyboard" for the interface, and "Objective-C" for the language (only the main file will need to be Objective-C++, the rest of the codebase can be C++).
+
+
+![Setting Up New Xcode Project 1](docs/images/quick_start_1.png)
+![Setting Up New Xcode Project 2](docs/images/quick_start_2.png)
+
+You will get the following project: 
+```
+app.xcodeproj
+└── app
+	├── AppDelegate.h
+	├── AppDelegate.m
+	├── Assets.xcassets
+	├── Main.storyboard
+	├── ViewController.h
+	├── ViewController.m
+	└── main.m
+```
+
+Delete the files: 
+- `AppDelegate.h`
+- `AppDelegate.m`
+- `Main.storyboard`
+- `ViewController.h`
+- `ViewController.m`
+
+And rename `main.m` (Objective-C) into `main.mm` (Objective-C++) so that the entry point can use both C++ and Objective-C++ syntax.
+Reorganize the project however you want now, the only constraint is that you need to keep the `.xcassets` folder, and `main.mm` somewhere.
+
+For example, my project looks like that now: 
+```
+app.xcodeproj/
+│
+├── code/
+│	├── src/		// .cpp files
+│	├── include/	// .hpp files
+│	│
+│	└── main.mm		// entry point of the application
+│
+└── data/
+	└── assets.xcassets/
+```
+
+
+You can also move and rename "Assets.xcassets", but you will need to drag and drop the file in the following section to reassign it as "Development Asset":
+![Defining Development Assets](docs/images/quick_start_3.png)
+
+Once that is done, you can replace the content of `main.mm` with:
+```cpp
+#include <iostream>
+
+int main() {
+	std::cout << "Hello, World!" << '\n';
+	return 0;
+}
+```
+
+If the project runs, the setup is done.
+
+
+### 2. Adding the Library
+
+The first thing to do now is to go in your app project and add both "AppKit.framework" and "libLeaf-UI.dylib" in the "General" > "Frameworks, Libraries, and Embedded Content" section.
+
+Make sure that `AppKit.framework` is not embedded.
+![Defining Frameworks and Libraries](docs/images/quick_start_4.png)
+
+Set Header Search Paths to the folder containing Leaf-UI's headers. Set Library Search Paths to the folder containing `libLeafUI.dylib`. Xcode may populate the library search path automatically when the `.dylib` is added, but verify that it points to the correct directory.
+
+You should have something like:
+![Defining Search Paths](docs/images/quick_start_5.png)
+
+> Note: the library's "Dynamic Library Install Name Base" is set to `@rpath`, so the `.dylib` can be put anywhere on drive.
+
+
+**⚠ Caution ⚠**
+If upon running you encounter an error like:
+`'/your/path/libLeaf-UI.dylib' not valid for use in process: mapping process and mapped file (non-platform) have different Team IDs`
+
+You need to check "Disable Library Validation" in your project settings:
+![Disabling Library Validation](quick_start_6.png)
+
+At this point your program should run as expected.
+
+### 3. Create Your First App
+
+#### Empty Window
+
+Now that the setup is done, we can create a first crude application.
+Replace the content of your `main.mm` with this: 
+```cpp
+#include <leaf_ui.hpp>
+
+int main() {
+	auto app = leaf::application::create();
+	auto window = leaf::window::create
+		(CGRect({100, 100, 200, 200}), NSWindowStyleMaskTitled);
+	
+	app->add_window(window);
+	window->show();
+	
+	return app->run();
+}
+```
+
+If everything is ok, a tiny window should open in the bottom left corner of your screen.
+It won't respond to shortcuts like ( ⌘ + Q ) or ( ⌘ + W ), that's normal, you need to initialize menu items to handle this behavior later on.
+
+> Note: you might see warnings in your console like: 
+> `-[NSApplication(NSWindowRestoration) restoreWindowWithIdentifier:state:completionHandler:] Unable to find className=(null)`
+> 
+> or:
+> `Unable to obtain a task name port right for pid...`
+>
+> You can ignore those for now.
+
+
+#### Responsive Window
+
+Now you can initialize the menu of your app, like so:
+```cpp
+int main() {
+	auto app = leaf::application::create();
+	auto window = leaf::window::create(CGRect({100, 100, 200, 200}),
+	                                   NSWindowStyleMaskTitled);
+	
+	app->add_window(window);
+	window->show();
+	
+	// ------ menu config ------
+	
+	auto app_menu = leaf::menu::create("App");
+	
+	// Quit App
+	auto quit_item = leaf::menu_item::create(
+		"Quit App", [&] { app->quit(); });
+	
+	quit_item->set_shortcut(
+	    leaf::shortcut(leaf::modifier_flag::command, "q")); // = ⌘Q
+	
+	// Close Active Window
+	auto close_window_item = leaf::menu_item::create(
+	    "Close Window", [&] { app->close_active_window(); });
+	    
+	close_window_item->set_shortcut(
+	    leaf::shortcut(leaf::modifier_flag::command, "w")); // = ⌘W
+	
+	app_menu->add_menu_item(quit_item);
+	app_menu->add_menu_item(close_window_item);
+	
+	// ------ menu config ------
+	
+	app->add_menu(app_menu);
+	return app->run();
+}
+```
+
+Now your application should close when using the default shortcuts ⌘Q and ⌘W. The shortcuts can be set to pretty much anything.
+
+
+#### Your First Widget
+
+At this point, if the code compiles and runs correctly, and the window is responsive to the defined keyboard shortcuts, it's time to add widgets.
+
+To add a simple label with a button, use the following code:
+```cpp
+int main() {
+	auto app = leaf::application::create();
+	auto window = leaf::window::create(CGRect({100, 100, 200, 200}),
+			                            NSWindowStyleMaskTitled);
+	
+	app->add_window(window);
+	window->show();
+	
+	// menu config
+	
+	auto app_menu = leaf::menu::create("App");
+	
+	// Quit App
+	auto quit_item = leaf::menu_item::create("Quit App", [&] { app->quit(); });
+	
+	quit_item->set_shortcut(
+	    leaf::shortcut(leaf::modifier_flag::command, "q")); // = ⌘Q
+	
+	// Close Active Window
+	auto close_window_item = leaf::menu_item::create(
+	    "Close Window", [&] { app->close_active_window(); });
+	
+	close_window_item->set_shortcut(
+	    leaf::shortcut(leaf::modifier_flag::command, "w")); // = ⌘W
+	
+	app_menu->add_menu_item(quit_item);
+	app_menu->add_menu_item(close_window_item);
+	
+	// menu config
+	
+	
+	// widgets config
+	
+	auto label = leaf::label::create("Hello, World!", CGRect{50, 80, 100, 20});
+	window->add_view(label);
+	
+	auto button = leaf::button::create(CGRect{80, 20, 80, 20});
+	button->set_title("Press Me");
+	button->set_action([&label] { label->set_text("Button Pressed"); });
+	window->add_view(button);
+	
+	// widgets config
+	
+	app->add_menu(app_menu);
+	return app->run();
+}
+```
+
+Now you have a crude application with widgets interacting in real time.
+
+
+### Congratulations
+
+🎉 You just made your first AppKit application through C++ 🎉
+
+From here, you can use the available Leaf-UI classes to build your interface. See the next section, **Classes Handled**, for the currently supported AppKit objects.
+
+
 ## Classes Handled
 
 ### Application & Window
@@ -55,19 +285,16 @@ main_window->show();
 - [x] `NSWindow`
 - [x] `NSWindowDelegate`
 
-
 ### Objects
 
 - [x] `NSImage`
 - [x] `NSData`
 - [x] `NSTimer`
 
-
 ## Menus
 
 - [x] `NSMenu`
 - [x] `NSMenuItem`
-
 
 ### Views
 
@@ -79,7 +306,6 @@ main_window->show();
 - [x] `NSButton`
 - [x] `NSSlider`
 - [x] `NSTextField` 
-
 
 
 ## Specificities
