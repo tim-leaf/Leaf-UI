@@ -132,7 +132,7 @@ If upon running you encounter an error like:
 `'/your/path/libLeaf-UI.dylib' not valid for use in process: mapping process and mapped file (non-platform) have different Team IDs`
 
 You need to check "Disable Library Validation" in your project settings:
-![Disabling Library Validation](quick_start_6.png)
+![Disabling Library Validation](docs/images/quick_start_6.png)
 
 At this point your program should run as expected.
 

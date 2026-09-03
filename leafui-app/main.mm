@@ -7,7 +7,6 @@
 
 #include "log.hpp"
 #include <iostream>
-#include <thread>
 
 #include <leaf_ui.hpp>
 
@@ -59,7 +58,7 @@ int main() {
 	////// - ☢️ WIDGETS TESTS ☢️
 
 	auto timer = leaf::timer::create(1, true);
-	timer->set_action([] { std::cout << "PROUT\n"; });
+	timer->set_action([] { std::cout << "test\n"; });
 
 	////// ☢️ WIDGETS TESTS ☢️ -
 
